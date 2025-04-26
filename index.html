@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>James Hitchcock's Digital CV</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- Linking the google font 'Roboto Flex' -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  </head>
+  <body>
+    <header id="top">
+      <div class="header-left">
+        <h1>James (Jimmy) Hitchcock</h1>
+        <div class="theme-toggle">
+          <i class="fas fa-moon"></i>
+          <i class="fas fa-sun"></i>
+        </div>
+      </div>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#about" class="nav-link">About</a></li>
+          <li><a href="#skills" class="nav-link">Skills</a></li>
+          <li><a href="#toolkit" class="nav-link">Toolkit</a></li>
+          <li><a href="#projects" class="nav-link">Projects</a></li>
+          <li><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+      <!-- Mobile navigation toggle button -->
+      <div class="menu-toggle">
+        <i class="fas fa-bars"></i>
+      </div>
+    </header>
+    
+    <main>
+      <section id="about" class="section-container">
+        <div class="intro-container">
+          <img src="images/5298741167699985950.jpeg" alt="A picture of me on my way back home on a ferry" id="profile-pic">
+          <div class="intro-text">
+            <h2 class="section-title">About Me</h2>
+            <p>I'm learning software development to enhance my career, make cool websites, and help others realize their dreams.
+              <br>As I am passionate about video game development I will also make video games leveraging the skills of software development.
+            </p>
+          </div>
+        </div>
+        
+        <div class="personal-details">
+          <h3>Contact Details</h3>
+          <p><i class="fas fa-user"></i> James Hitchcock</p>
+          <p><i class="fas fa-map-marker-alt"></i> Bellingham, Washington</p>
+          <p><i class="fas fa-envelope"></i> <a href="mailto:jhitchcock687@gmail.com">jhitchcock687@gmail.com</a></p>
+        </div>
+      </section>
+      
+      <!-- Skills section with skill bars -->
+      <section id="skills" class="section-container skills">
+        <h2 class="section-title">Skills</h2>
+        <div class="skills-container">
+          <div class="skill-category">
+            <h3>Software Development</h3>
+            <div class="skill-item">
+              <span class="skill-name">HTML</span>
+              <div class="skill-bar">
+                <div class="skill-level" data-level="75"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">CSS</span>
+              <div class="skill-bar">
+                <div class="skill-level" data-level="78"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">JavaScript</span>
+              <div class="skill-bar">
+                <div class="skill-level" data-level="80"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">Python</span>
+              <div class="skill-bar">
+                <div class="skill-level" data-level="30"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">SQL</span>
+              <div class="skill-bar">
+                <div class="skill-level" data-level="40"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">Java</span>
+              <div class="skill-bar">
+                <div class="skill-level" data-level="25"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">React</span>
+              <div class="skill-bar">
+                <div class="skill-level" data-level="30"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">Adobe Suite</span>
+              <div class="skill-bar">
+                <div class="skill-level" data-level="60"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Toolkit section updated with icons -->
+      <section id="toolkit" class="section-container toolkit">
+        <h2 class="section-title">My Webdev Toolkit</h2>
+        <div class="toolkit-grid">
+          <div class="toolkit-item">
+            <i class="fas fa-bolt"></i>
+            <h3>Quick Learner</h3>
+            <p>Turn-around on projects is quick and learning new skills is fun</p>
+            <div class="toolkit-tools">VS Code, MDN/general online learning resources</div>
+          </div>
+          <div class="toolkit-item">
+            <i class="fas fa-lightbulb"></i>
+            <h3>Creativity</h3>
+            <p>My background in design, tabletop roleplaying games and podcasting lend themselves to deep pursuits of creative subjects</p>
+            <div class="toolkit-tools">Adobe creative suite, Microsoft Suite, Blender, Unreal Engine 5</div>
+          </div>
+          <div class="toolkit-item">
+            <i class="fas fa-search"></i>
+            <h3>Detail-Oriented</h3>
+            <p>My love of video games and tabletop roleplaying games make me a stickler for details</p>
+            <div class="toolkit-tools">Github, Slack, Tape (organization workflow)</div>
+          </div>
+          <div class="toolkit-item">
+            <i class="fas fa-chart-line"></i>
+            <h3>Passion for improvement</h3>
+            <p>I know there is always something more to learn and am excited and curious to continue learning indefinitely</p>
+            <div class="toolkit-tools">Springboard learning, my general vibe</div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Projects section with cards and modal functionality -->
+      <section id="projects" class="section-container projects">
+        <h2 class="section-title">Projects</h2>
+        
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="web">Web</button>
+          <button class="filter-btn" data-filter="games">Games</button>
+          <button class="filter-btn" data-filter="tools">Tools</button>
+        </div>
+        
+        <div class="projects-grid">
+          <!-- Project 1 -->
+          <div class="project-card" data-category="web">
+            <div class="project-image">
+              <img src="images/projects/webpage.png" alt="An example of a personal website">
+              <div class="project-overlay">
+                <button class="view-project-btn" data-project="personal-site">View Details</button>
+                <a href="../Personal Site/index.html" class="open-project-btn" target="_blank">Open Project</a>
+              </div>
+            </div>
+            <h3>Personal Website</h3>
+            <p>My Personal website is an extension of my CV with a more personal flair showing my interests.</p>
+            <div class="project-tags">
+              <span>HTML</span>
+              <span>CSS</span>
+              <span>JavaScript</span>
+            </div>
+          </div>
+          
+          <!-- Project 2 -->
+          <div class="project-card" data-category="games tools">
+            <div class="project-image">
+              <img src="images/projects/roll-anim.webp" alt="A Spinning 20 sided die">
+              <div class="project-overlay">
+                <button class="view-project-btn" data-project="dice-roller">View Details</button>
+                <a href="../D20/index.html" class="open-project-btn" target="_blank">Open Project</a>
+              </div>
+            </div>
+            <h3>Satisfying Digital Dice Roller</h3>
+            <p>A 3D dice rolling experience with immersive animation and random results.</p>
+            <div class="project-tags">
+              <span>JavaScript</span>
+              <span>Three.js</span>
+              <span>CSS3</span>
+            </div>
+          </div>
+          
+          <!-- Project 3 -->
+          <div class="project-card" data-category="tools">
+            <div class="project-image">
+              <img src="images/projects/flip-anim.webp" alt="Tarot Card">
+              <div class="project-overlay">
+                <button class="view-project-btn" data-project="tarot">View Details</button>
+                <a href="../Tarot/tarot-webapp/src/cardflip.html" class="open-project-btn" target="_blank">Open Project</a>
+              </div>
+            </div>
+            <h3>Tarot Card Picker</h3>
+            <p>Interactive card drawing with animations and tarot interpretations.</p>
+            <div class="project-tags">
+              <span>HTML</span>
+              <span>CSS</span>
+              <span>JavaScript</span>
+            </div>
+          </div>
+          
+          <!-- More Projects Card -->
+          <div class="project-card more-projects-card" data-category="web games tools">
+            <div class="more-projects-content">
+              <i class="fas fa-folder-open"></i>
+              <h3>More Projects</h3>
+              <p>Explore my complete collection of projects including:</p>
+              <ul class="more-projects-list">
+                <li><a href="../tictactoe/index.html" target="_blank">Tic Tac Toe</a></li>
+                <li><a href="../Magic8/index.html" target="_blank">Magic 8 Ball</a></li>
+                <li><a href="../API practice/index.html" target="_blank">Weather App</a></li>
+                <li><a href="../Ghibli Images/index.html" target="_blank">Ghibli Gallery</a></li>
+              </ul>
+              <button id="showAllProjects" class="view-all-btn">View All Projects</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Project modals will be inserted here by JavaScript -->
+      <div id="project-modal" class="modal">
+        <div class="modal-content">
+          <span class="close-modal">&times;</span>
+          <div id="modal-content-container"></div>
+        </div>
+      </div>
+      
+      <!-- All Projects Modal -->
+      <div id="all-projects-modal" class="modal">
+        <div class="modal-content">
+          <span class="close-modal">&times;</span>
+          <div id="all-projects-container">
+            <h2>All Projects</h2>
+            <div class="projects-categories">
+              <div class="project-category">
+                <h3>Web Development</h3>
+                <ul class="all-projects-list">
+                  <li><a href="../Personal Site/index.html" target="_blank">Personal Website</a></li>
+                  <li><a href="../API practice/index.html" target="_blank">Weather API App</a></li>
+                  <li><a href="index.html" target="_blank">Digital CV</a></li>
+                  <li><a href="../Login screen/index.html" target="_blank">Login Screen</a></li>
+                </ul>
+              </div>
+              
+              <div class="project-category">
+                <h3>Games</h3>
+                <ul class="all-projects-list">
+                  <li><a href="../D20/index.html" target="_blank">D20 Dice Roller</a></li>
+                  <li><a href="../tictactoe/index.html" target="_blank">Tic Tac Toe</a></li>
+                  <li><a href="../Tennis/game.html" target="_blank">Tennis Game</a></li>
+                  <li><a href="../Idler/index.html" target="_blank">Idle Game</a></li>
+                </ul>
+              </div>
+              
+              <div class="project-category">
+                <h3>Fun Tools</h3>
+                <ul class="all-projects-list">
+                  <li><a href="../Tarot/tarot-webapp/src/cardflip.html" target="_blank">Tarot Card Reader</a></li>
+                  <li><a href="../Magic8/index.html" target="_blank">Magic 8 Ball</a></li>
+                  <li><a href="../MadLib/index.html" target="_blank">Mad Lib Generator</a></li>
+                  <li><a href="../Ghibli Images/index.html" target="_blank">Ghibli Gallery</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    
+    <!-- Contact section with animated form -->
+    <section id="contact" class="section-container contact">
+      <h2 class="section-title">Contact</h2>
+      <div class="contact-container">
+        <div class="contact-info">
+          <h3>Let's Connect!</h3>
+          <p>I'm always open to discussing new projects, creative ideas or opportunities to be part of your vision.</p>
+          <div class="social-links">
+            <a href="https://www.linkedin.com/in/james-hitchcock1/" target="_blank"><i class="fab fa-linkedin"></i></a>
+            <a href="https://github.com/jhitch88" target="_blank"><i class="fab fa-github"></i></a>
+          </div>
+        </div>
+        
+        <!-- <div class="form-container">
+          <form id="contact-form" method="post" action="#">
+            <div class="form-group">
+              <input type="text" id="name" name="name" required>
+              <label for="name">Name</label>
+              <span class="form-error"></span>
+            </div>
+            
+            <div class="form-group">
+              <input type="email" id="email" name="email" required>
+              <label for="email" >Email</label>
+              <span class="form-error"></span>
+            </div>
+            
+            <div class="form-group">
+              <select id="reason" name="reason" required>
+                <option value="" disabled selected>Select a reason</option>
+                <option value="Job">Job Offer</option>
+                <option value="Idea">Website Idea</option>
+                <option value="money">You have 1 million dollars for me</option>
+              </select>
+              <span class="form-error"></span>
+            </div>
+            
+            <div class="form-group">
+              <textarea id="message" name="message" rows="5" required></textarea>
+              <label for="message">This form does not have backend support</label>
+              <span class="form-error"></span>
+            </div>
+            
+            <div class="form-group checkbox">
+              <input type="checkbox" id="newsletter" name="newsletter" value="newsletter">
+              <label for="newsletter">Subscribe to my newsletter</label>
+            </div>
+            
+            <div class="button-container">
+              <button type="reset" class="reset-btn">Clear</button>
+              <button type="submit" class="submit-btn">Send Message</button>
+            </div>
+          </form>
+          <div id="form-success" class="hidden">
+            <i class="fas fa-check-circle"></i>
+            <p>Message (not) received successfully!</p>
+          </div>
+        </div>
+      </div> -->
+    </section>
+    
+    <footer>
+      <div class="footer-content">
+        <small>&copy; Copyright 2025 - Jimmy Hitchcock</small>
+        <div class="back-to-top">
+          <a href="#top"><i class="fas fa-arrow-up"></i></a>
+        </div>
+      </div>
+    </footer>
+    
+    <script src="script.js"></script>
+
+  </body>
+</html>
