@@ -1,0 +1,15 @@
+tarot-webapp
+├── src
+│   ├── css
+│   │   ├── styles.css
+│   │   └── animations.css
+│   ├── js
+│   │   ├── app.js
+│   │   ├── cards.js
+│   │   └── animations.js
+│   ├── index.html
+│   └── data
+│       └── tarot-data.json
+├── tests
+│   └── cards.test.js
+└── README.md

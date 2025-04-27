@@ -1,0 +1,113 @@
+@media screen and (min-width: 480px) and (max-width: 768px) {
+  body{
+    padding: 5%;
+    font-size: 1.2rem;
+  }
+  .button-zone button{
+    padding: 10px 20px;
+    font-size: 20px;
+    border: 2px solid black;
+    border-radius: 10px;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    transition: transform 0.3s ease; /* Add transition for smooth scaling */
+  }
+}
+
+.dice-zone{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; 
+    width: auto;
+    height: auto; 
+    min-height: 400px;
+    position: relative;
+  }
+  
+  .button-zone{
+    margin: auto;
+    display: flex;
+    box-sizing: border-box;
+    justify-content: center;
+    align-items: center;
+    height: 20px;
+    color-scheme: dark;
+  }
+  
+  .button-zone button{
+    padding: 10px 20px;
+    font-size: 20px;
+    border: 2px solid black;
+    border-radius: 10px;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    transition: transform 0.3s ease; /* Add transition for smooth scaling */
+  }
+  
+  .button-zone button:hover{
+    background-color: rgba(255, 255, 255, 0.563);
+  }
+  
+  .button-zone button:active{
+    transform: scale(1.25);
+  }
+  
+  body{
+    background: linear-gradient(90deg, rgb(0, 255, 255) 0%, rgb(0, 0, 0) 50%, rgb(0, 255, 255) 100%);
+  }
+  
+  .dice {
+    transform: translateX(-20vw);
+    animation: dice-enter 1s forwards;
+  }
+  
+  @keyframes dice-enter {
+    to {
+        transform: translateX(0);
+    }
+  }
+  
+  /* Attempting to get the dice to start off screen however this method leads to
+  a completed animation before the die is centered. */
+  /* .dice {
+    transform: translateX(-20vw);
+    animation: dice-enter 1s forwards;
+  } */
+  
+  /* @keyframes dice-enter {
+    to {
+        transform: translateX(0);
+    }
+  } */
+  
+/* Previous result fade in styling */
+  /* #result {
+    opacity: 0;
+    font-family: "Pirata One", serif;
+    font-weight: 400;
+    font-style: normal;
+    position: absolute;
+    font-size: 50px;
+    color: rgb(255, 255, 255);
+    margin: 10px;
+    padding: 0;
+    z-index: 2;
+    top: 170px;         
+    left: 49%;
+    transform: translateX(-50%);
+  } */
+  
+  /* Create a fade‑in class (deprecated)*/
+  /* .fade-in {
+    animation: showResult 0.5s forwards;
+    animation-delay: 0.2s; Adjust as needed
+  }
+  
+  @keyframes showResult {
+    to {
+        opacity: 1;
+    }
+  } */

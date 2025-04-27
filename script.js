@@ -185,22 +185,23 @@ function initModalFunctionality() {
     
     // Project data for modals
     const projectData = {
-        'personal-site': {
-            title: 'Personal Website',
-            images: ['images/projects/webpage.png'],
+        'login-screen': {
+            title: 'Interactive Login Screen',
+            images: ['images/projects/login.gif'],
             description: `
-                <p>My personal website showcases who I am beyond just my professional skills. It includes:</p>
+                <p>A modern and interactive login screen with smooth animations and visual feedback. Features include:</p>
                 <ul>
-                    <li>Interactive portfolio of personal projects</li>
-                    <li>Blog where I share my thoughts on technology and game development</li>
-                    <li>Custom animations and transitions for a modern feel</li>
-                    <li>Responsive design for all devices</li>
+                    <li>Floating background shapes for visual interest</li>
+                    <li>Animated form inputs with validation feedback</li>
+                    <li>Loading animation when submitting credentials</li>
+                    <li>Social login options with clean icon integration</li>
+                    <li>Subtle rotation effect that follows cursor movement</li>
                 </ul>
-                <p>Built with HTML5, CSS3, and JavaScript, this site demonstrates my front-end development abilities.</p>
+                <p>Built with HTML5, CSS3, and JavaScript to create an engaging user experience for authentication flows.</p>
             `,
-            technologies: ['HTML5', 'CSS3', 'JavaScript', 'Responsive Design'],
-            link: '../Personal Site/index.html',
-            localPath: '../Personal Site'
+            technologies: ['HTML5', 'CSS3', 'JavaScript', 'Animation', 'Responsive Design'],
+            link: 'Projects/Login screen/index.html',
+            localPath: 'Projects/Login screen'
         },
         'dice-roller': {
             title: 'Satisfying Digital Dice Roller',
@@ -217,8 +218,8 @@ function initModalFunctionality() {
                 <p>Built with JavaScript and Three.js, this tool demonstrates my ability to create interactive 3D web applications.</p>
             `,
             technologies: ['JavaScript', 'Three.js', 'CSS3', 'HTML5', 'Physics Engine'],
-            link: '../D20/index.html',
-            localPath: '../D20'
+            link: 'Projects/D20/index.html',
+            localPath: 'Projects/D20'
         },
         'tarot': {
             title: 'Tarot Card Picker',
@@ -235,8 +236,8 @@ function initModalFunctionality() {
                 <p>This project combines CSS animations with JavaScript logic to create a fluid, engaging user experience.</p>
             `,
             technologies: ['HTML5', 'CSS3', 'JavaScript', 'Animation', 'Web Storage API'],
-            link: '../Tarot/tarot-webapp/src/cardflip.html',
-            localPath: '../Tarot'
+            link: 'Projects/Tarot/tarot-webapp/src/cardflip.html',
+            localPath: 'Projects/Tarot'
         }
     };
     

@@ -1,0 +1,98 @@
+/* css/animations.css */
+.card {
+  width: 200px;
+  height: 350px;
+  perspective: 1000px;
+  position: relative;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  transform-origin: center;
+  transform: rotateY(180deg); /* Start the image rotated */
+}
+
+.card.flipping {
+  transform: rotateY(270deg);
+  transition: transform 0.7s;
+}
+
+.card.flipped {
+  transform: rotateY(360deg);
+}
+
+/* Make sure transitions are applied consistently */
+.card, .card.flipping, .card.flipped {
+  transition: transform 0.7s;
+}
+
+/* Create a wrapper for the card to help with 3D transforms */
+.card-wrapper {
+  perspective: 1000px;
+}
+
+.cards-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#card-image {
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.3s;
+  backface-visibility: hidden;
+}
+
+/* Fireflies addition */
+.fireflies-container {
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+}
+
+.firefly {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 223, 148, 0.8);
+  border-radius: 50%;
+  filter: blur(1px);
+  animation: firefly-float 2s ease-in-out infinite;
+  opacity: 0;
+}
+
+.fireflies-container.fade-out {
+  opacity: 0;
+}
+
+@keyframes firefly-float {
+  0%, 100% {
+      transform: translate(0, 0);
+      opacity: 0;
+  }
+  20%, 80% {
+      opacity: 1;
+  }
+  50% {
+      transform: translate(
+          calc(50px - 100px * var(--random-x, 0.5)),
+          calc(50px - 100px * var(--random-y, 0.5))
+      );
+  }
+}
+
+/* Add varied delays and durations */
+.firefly:nth-child(3n) { 
+  animation-delay: 0.5s; 
+  animation-duration: 5s;
+}
+.firefly:nth-child(3n+1) { 
+  animation-delay: 1s;
+  animation-duration: 6.5s;
+}
+.firefly:nth-child(3n+2) { 
+  animation-delay: 1.5s;
+  animation-duration: 8s;
+}

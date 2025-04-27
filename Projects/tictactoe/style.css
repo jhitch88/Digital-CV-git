@@ -1,0 +1,205 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 40px;
+}
+
+.scoreboard {
+    display: flex;
+    justify-content: space-around;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.player1-score {
+    color: #e74c3c; /* X color */
+}
+
+.player2-score {
+    color: #3498db; /* O color */
+}
+
+.turn-indicator {
+    color: #333;
+    font-weight: bold;
+    margin: 20px 0;
+    font-size: 18px;        
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 10px;
+    width: 300px;
+    height: 300px;
+    margin: 0 auto 20px;
+    
+}
+
+.cell {
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 60px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 90px;
+    height: 90px;
+    /* Prevent content from affecting size */
+    overflow: hidden;
+}
+
+.cell:hover {
+    background-color: #f9f9f9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.cell.x {
+    color: #e74c3c;
+}
+
+.cell.o {
+    color: #3498db;
+}
+
+.controls {
+    margin-top: 30px;
+    display: flex;
+    flex-wrap: wrap; /* Allow buttons to wrap to next line */
+    justify-content: center;
+    gap: 10px; /* Use gap for spacing between buttons */
+    max-width: 300px; /* Match the board width */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s;
+    flex: 0 0 auto;
+    margin: 5px;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+.reset-scores-button {
+    background-color: #e74c3c;
+}
+
+.reset-scores-button:hover {
+    background-color: #c0392b;
+}
+
+.vs-computer-button{
+    background-color: #2ecc71;
+}
+
+.vs-computer-button:hover {
+    background-color: #24a359;
+}
+
+/* Responsive design */
+@media (max-width: 500px) {
+    .board {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .cell {
+        font-size: 50px;
+        width: 75px; /* Adjust cell size for mobile */
+        height: 75px;
+    }
+    
+    .controls {
+        flex-direction: column; /* Stack buttons vertically on mobile */
+        align-items: center;
+    }
+    
+    button {
+        width: 150px; /* Fixed width for buttons on mobile */
+        margin: 5px 0;
+    }
+}
+
+.game-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.game-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.overlay-content {
+    background-color: white;
+    padding: 30px 50px;
+    border-radius: 10px;
+    text-align: center;
+    transform: translateY(-20px);
+    transition: all 0.4s ease;
+}
+
+.game-overlay.active .overlay-content {
+    transform: translateY(0);
+}
+
+.overlay-content h2 {
+    font-size: 28px;
+}
+
+.win-message-x {
+    color: #e74c3c;
+}
+
+.win-message-o {
+    color: #3498db;
+}
+
+.draw-message {
+    color: #f39c12;
+}

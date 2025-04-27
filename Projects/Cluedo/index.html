@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detective Jacques Cluedo's Case Files</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sedgwick+Ave&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="game-container">
+        <header>
+            <div class="detective-portrait">
+                <!-- Custom Jacques Cluedo image -->
+                <img src="images/JaquesCluedo.png" alt="Detective Jacques Cluedo" class="detective-img">
+            </div>
+            <div class="game-title">
+                <h1>Detective Jacques Cluedo's Mixed-Up Case Files</h1>
+                <p class="subtitle">Help Detective Jacques Cluedo solve the case!</p>
+            </div>
+            <div class="paw-print">
+                <i class="fas fa-paw"></i>
+            </div>
+        </header>
+
+        <div class="game-explanation">
+            <i class="fas fa-info-circle"></i>
+            <p>Detective Jacques Cluedo knows who did it, with what, and where - but he got into the catnip and mixed up the case files! Help rearrange the clues into their correct order to solve the case.</p>
+        </div>
+        
+        <div class="case-file">
+            <div class="attempts-counter">
+                <span id="attempts-text">Attempts: 0/6</span>
+                <button id="reset-button">New Case</button>
+            </div>
+
+            <div class="clue-selection">
+                <div class="clue-category">
+                    <h3>Suspect</h3>
+                    <div class="clue-input-group">
+                        <select id="suspect-select">
+                            <option value="" disabled selected>Who did it?</option>
+                        </select>
+                        <div class="position-selector">
+                            <label>Case File Order:</label>
+                            <select id="suspect-position">
+                                <option value="0">File #1</option>
+                                <option value="1">File #2</option>
+                                <option value="2">File #3</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="clue-category">
+                    <h3>Weapon</h3>
+                    <div class="clue-input-group">
+                        <select id="weapon-select">
+                            <option value="" disabled selected>With what?</option>
+                        </select>
+                        <div class="position-selector">
+                            <label>Case File Order:</label>
+                            <select id="weapon-position">
+                                <option value="0">File #1</option>
+                                <option value="1" selected>File #2</option>
+                                <option value="2">File #3</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="clue-category">
+                    <h3>Location</h3>
+                    <div class="clue-input-group">
+                        <select id="location-select">
+                            <option value="" disabled selected>Where?</option>
+                        </select>
+                        <div class="position-selector">
+                            <label>Case File Order:</label>
+                            <select id="location-position">
+                                <option value="0">File #1</option>
+                                <option value="1">File #2</option>
+                                <option value="2" selected>File #3</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button id="submit-guess">Submit Guess</button>
+            </div>
+            
+            <div class="notepad">
+                <h3>Detective's Notes</h3>
+                <div class="feedback-area" id="feedback-area">
+                    <!-- Feedback will be populated here -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="guess-history" id="guess-history">
+            <!-- Previous guesses will be displayed here -->
+        </div>
+        
+        <div class="answer-container" id="answer-container">
+            <!-- The answer will be revealed here when the game ends -->
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

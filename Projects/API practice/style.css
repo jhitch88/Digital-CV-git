@@ -1,0 +1,222 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    color: #ffffff;
+    height: 100vh;
+    overflow: hidden;
+    transition: background-color 2s ease;
+}
+
+/* Weather background states */
+body.day {
+    background: linear-gradient(to bottom, #4ca1af, #c4e0e5);
+}
+
+body.night {
+    background: linear-gradient(to bottom, #000510, #0a1218, #0f1c24);
+}
+
+body.cloudy {
+    background: linear-gradient(to bottom, #757f9a, #d7dde8);
+}
+
+body.rainy {
+    background: linear-gradient(to bottom, #3f4c6b, #606c88);
+}
+
+/* body.windy {
+    background: linear-gradient(to bottom, #6190e8, #a7bfe8);
+} */
+
+.weather-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: relative;
+    z-index: 1;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.weather-visual {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.sun-moon {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    top: 40px;
+    right: 80px;
+    transition: all 2s ease;
+}
+
+.sun {
+    background: #FFD700;
+    box-shadow: 0 0 40px 15px #FFD700;
+    /* animation: pulse 3s infinite alternate; */
+}
+
+.moon {
+    background: #F8F8FF;
+    box-shadow: 0 0 20px 5px #F8F8FF;
+    /* animation: pulse 4s infinite alternate; */
+}
+
+.clouds {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.cloud {
+    position: absolute;
+    animation-name: float;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.15));
+    transition: opacity 0.5s ease;
+    will-change: transform;
+    image-rendering: auto;
+    opacity: 0; /* Start invisible */
+    animation-fill-mode: forwards; /* Retain end state */
+}
+
+/* Add custom clouds for variety */
+.cloud-white-1 { background-image: url('images/cloud-white-1.png'); }
+.cloud-white-2 { background-image: url('images/cloud-white-2.png'); }
+.cloud-white-3 { background-image: url('images/cloud-white-3.png'); }
+.cloud-white-4 { background-image: url('images/cloud-white-4.png'); }
+.cloud-gray-1 { background-image: url('images/cloud-gray-1.png'); }
+.cloud-gray-2 { background-image: url('images/cloud-gray-2.png'); }
+.cloud-gray-3 { background-image: url('images/cloud-gray-3.png'); }
+.cloud-gray-4 { background-image: url('images/cloud-gray-4.png'); }
+
+/* Enhanced custom clouds with more specific styling */
+.cloud-white-1, .cloud-white-2, .cloud-white-3, .cloud-white-4 { 
+    filter: drop-shadow(0 5px 15px rgba(255, 255, 255, 0.1)) brightness(1.05);
+}
+
+.cloud-gray-1, .cloud-gray-2, .cloud-gray-3, .cloud-gray-4 {
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2)) brightness(0.95);
+}
+
+/* Special styling adjustments for night mode clouds */
+body.night .cloud-white-1,
+body.night .cloud-white-2,
+body.night .cloud-white-3,
+body.night .cloud-white-4 {
+    filter: brightness(0.7) drop-shadow(0 5px 15px rgba(255, 255, 255, 0.05));
+    opacity: 0.6;
+}
+
+.weather-info {
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.location {
+    font-size: 24px;
+    margin: 0 0 20px;
+}
+
+.temperature-container {
+    font-size: 64px;
+    margin-bottom: 20px;
+}
+
+.details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    text-align: left;
+}
+
+.wind, .weather-condition, .time {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.wind {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.wind-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wind-icon img {
+    width: 100%;
+    height: auto;
+    filter: brightness(1.2);
+    opacity: 0.9;
+}
+
+.wind-data {
+    flex-grow: 1;
+}
+
+/* Animations */
+/* @keyframes pulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.1); }
+} */
+
+/* Modify the float animation to start off-screen */
+@keyframes float {
+    0% { 
+        transform: translateX(0) translateY(0);
+        opacity: 0; /* Start invisible */
+    }
+    5% {
+        opacity: 1; /* Fade in quickly */
+    }
+    100% { 
+        transform: translateX(calc(100vw + 500px)) translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    .weather-info {
+        max-width: 90%;
+    }
+    
+    .temperature-container {
+        font-size: 48px;
+    }
+    
+    .details {
+        grid-template-columns: 1fr;
+    }
+}
