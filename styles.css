@@ -155,7 +155,7 @@ header {
 
 /* Theme toggle */
 .theme-toggle {
-    position: relative; /* Changed from fixed to relative */
+    position: relative;
     z-index: 1001;
     background-color: var(--accent-color);
     color: white;
@@ -168,7 +168,13 @@ header {
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     transition: all 0.3s ease;
-    margin-left: 20px; /* Add margin to separate from name */
+    margin-left: 20px;
+    /* Ensure the button stays as a perfect circle */
+    min-width: 40px;
+    min-height: 40px;
+    max-width: 40px;
+    max-height: 40px;
+    aspect-ratio: 1/1;
 }
 
 .theme-toggle .fa-sun {
