@@ -93,11 +93,33 @@ function initNavigation() {
 // Theme toggle functionality
 function initThemeToggle() {
     const themeToggle = document.querySelector('.theme-toggle');
-    const storedTheme = localStorage.getItem('theme') || 'light';
     
-    // Set initial theme from localStorage
-    document.documentElement.setAttribute('data-theme', storedTheme);
+    // Check for system preference if no stored theme
+    const getPreferredTheme = () => {
+        // First check localStorage
+        const storedTheme = localStorage.getItem('theme');
+        if (storedTheme) {
+            return storedTheme;
+        }
+        
+        // If no stored preference, check system preference
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
     
+    // Set initial theme based on preference
+    const preferredTheme = getPreferredTheme();
+    document.documentElement.setAttribute('data-theme', preferredTheme);
+    
+    // Watch for system preference changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        // Only update if user hasn't set a manual preference
+        if (!localStorage.getItem('theme')) {
+            const newTheme = e.matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+        }
+    });
+    
+    // Theme toggle button click handler
     themeToggle.addEventListener('click', function() {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'light' ? 'dark' : 'light';
