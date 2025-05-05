@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initContactForm();
     initScrollAnimations();
     initAllProjectsModal(); // Add this new initialization
+    initEmailProtection(); // Add this new initialization
 });
 
 // All Projects modal functionality
@@ -421,6 +422,35 @@ function initScrollAnimations() {
             } else {
                 backToTop.style.opacity = '0';
             }
+        });
+    }
+}
+
+// Email protection functionality
+function initEmailProtection() {
+    const showEmailBtn = document.getElementById('show-email');
+    const emailContainer = document.getElementById('email-address');
+    
+    if (showEmailBtn && emailContainer) {
+        // Encode the email address to make it harder for bots to scrape
+        const encodedEmail = "jhitchcock687" + String.fromCharCode(64) + "gmail" + String.fromCharCode(46) + "com";
+        
+        showEmailBtn.addEventListener('click', function() {
+            // Display the email only when clicked
+            emailContainer.textContent = encodedEmail;
+            emailContainer.classList.add('visible');
+            
+            // Create a mailto link
+            const emailLink = document.createElement('a');
+            emailLink.href = `mailto:${encodedEmail}`;
+            emailLink.textContent = encodedEmail;
+            
+            // Replace the text with the link
+            emailContainer.textContent = '';
+            emailContainer.appendChild(emailLink);
+            
+            // Hide the button as it's no longer needed
+            showEmailBtn.style.display = 'none';
         });
     }
 }
