@@ -156,11 +156,11 @@
           <button class="filter-btn" data-filter="tools">Tools</button>
         </div>
         
-        <div class="projects-grid">
+        <div class="projects-grid" id="projects-grid">
           <!-- Project 1 -->
           <div class="project-card" data-category="web">
             <div class="project-image">
-              <img src="images/projects/login.gif" alt="An example of a login screen">
+              <img src="images/projects/login.gif" alt="An example of a login screen" loading="lazy">
               <div class="project-overlay">
                 <button class="view-project-btn" data-project="login-screen">View Details</button>
                 <a href="Projects/Login screen/index.html" class="open-project-btn" target="_blank">Open Project</a>
@@ -178,7 +178,7 @@
           <!-- Tic Tac Toe Game -->
           <div class="project-card" data-category="games">
             <div class="project-image">
-              <img src="images/projects/tic-tac-toe.webp" alt="Tic Tac Toe Game">
+              <img src="images/projects/tic-tac-toe.webp" alt="Tic Tac Toe Game" loading="lazy">
               <div class="project-overlay">
                 <a href="Projects/tictactoe/index.html" class="open-project-btn" target="_blank">Play Game</a>
               </div>
@@ -196,13 +196,13 @@
           <!-- Tennis Game -->
           <div class="project-card" data-category="games">
             <div class="project-image">
-              <img src="images/projects/tennis.webp" alt="Tennis Game">
+              <img src="images/projects/tennis.webp" alt="Tennis Game" loading="lazy">
               <div class="project-overlay">
                 <a href="Projects/Tennis/game.html" class="open-project-btn" target="_blank">Play Game</a>
               </div>
             </div>
             <h3>Tennis Game</h3>
-            <p>A fast-paced Pong-style tennis game with increasing difficulty.</p>
+            <p>A fast-paced Pong-style tennis game using HTML Canvas.</p>
             <div class="project-tags">
               <span>HTML</span>
               <span>Canvas</span>
@@ -214,13 +214,13 @@
           <!-- Cluedo Game -->
           <div class="project-card" data-category="games">
             <div class="project-image">
-              <img src="images/projects/cluedo.webp" alt="Cluedo Game">
+              <img src="images/projects/cluedo.webp" alt="Cluedo Game" loading="lazy">
               <div class="project-overlay">
                 <a href="Projects/Cluedo/index.html" class="open-project-btn" target="_blank">Play Game</a>
               </div>
             </div>
             <h3>Cluedo Game</h3>
-            <p>A digital adaptation of the classic murder mystery board game.</p>
+            <p>Solve the clue-style case AND organize the clumsy cats files to catch the killer!</p>
             <div class="project-tags">
               <span>HTML</span>
               <span>CSS</span>
@@ -232,7 +232,7 @@
           <!-- MadLib Generator -->
           <div class="project-card" data-category="games">
             <div class="project-image">
-              <img src="images/projects/wildlibs.png" alt="MadLib Generator">
+              <img src="images/projects/wildlibs.png" alt="MadLib Generator" loading="lazy">
               <div class="project-overlay">
                 <a href="Projects/MadLib/index.html" class="open-project-btn" target="_blank">Play Game</a>
               </div>
@@ -250,7 +250,7 @@
           <!-- Project 2 -->
           <div class="project-card" data-category="tools">
             <div class="project-image">
-              <img src="images/projects/roll-anim.webp" alt="A Spinning 20 sided die">
+              <img src="images/projects/roll-anim.webp" alt="A Spinning 20 sided die" loading="lazy">
               <div class="project-overlay">
                 <button class="view-project-btn" data-project="dice-roller">View Details</button>
                 <a href="Projects/D20/index.html" class="open-project-btn" target="_blank">Open Project</a>
@@ -268,7 +268,7 @@
           <!-- Project 3 -->
           <div class="project-card" data-category="tools">
             <div class="project-image">
-              <img src="images/projects/flip-anim.webp" alt="Tarot Card">
+              <img src="images/projects/flip-anim.webp" alt="Tarot Card" loading="lazy">
               <div class="project-overlay">
                 <button class="view-project-btn" data-project="tarot">View Details</button>
                 <a href="Projects/Tarot/tarot-webapp/src/cardflip.html" class="open-project-btn" target="_blank">Open Project</a>
@@ -286,7 +286,7 @@
           <!-- Weather App -->
           <div class="project-card" data-category="web">
             <div class="project-image">
-              <img src="images/projects/weather.webp" alt="Weather App">
+              <img src="images/projects/weather.webp" alt="Weather App" loading="lazy">
               <div class="project-overlay">
                 <a href="Projects/API practice/index.html" class="open-project-btn" target="_blank">Open Project</a>
               </div>
@@ -304,7 +304,7 @@
           <!-- Ghibli Gallery -->
           <div class="project-card" data-category="tools">
             <div class="project-image">
-              <img src="images/projects/ghibli.webp" alt="Ghibli Gallery">
+              <img src="images/projects/ghibli.webp" alt="Ghibli Gallery" loading="lazy">
               <div class="project-overlay">
                 <a href="Projects/Ghibli Images/index.html" class="open-project-btn" target="_blank">Open Project</a>
               </div>
@@ -322,7 +322,7 @@
           <!-- Magic 8 Ball -->
           <div class="project-card" data-category="tools">
             <div class="project-image">
-              <img src="images/projects/8ball.webp" alt="Magic 8 Ball">
+              <img src="images/projects/8ball.webp" alt="Magic 8 Ball" loading="lazy">
               <div class="project-overlay">
                 <a href="Projects/Magic8/index.html" class="open-project-btn" target="_blank">Open Project</a>
               </div>
@@ -346,6 +346,10 @@
               <button id="showAllProjects" class="view-all-btn">View All Projects</button>
             </div>
           </div>
+        </div>
+        
+        <div class="load-more-container">
+          <button id="load-more-btn" class="load-more-btn">Load More Projects</button>
         </div>
       </section>
       

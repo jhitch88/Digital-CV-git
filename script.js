@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initScrollAnimations();
     initAllProjectsModal(); // Add this new initialization
     initEmailProtection(); // Add this new initialization
+    initProjectLoading(); // Add this new initialization
 });
 
 // All Projects modal functionality
@@ -163,6 +164,7 @@ function initSkillBars() {
 function initProjectFilters() {
     const filterButtons = document.querySelectorAll('.filter-btn');
     const projectCards = document.querySelectorAll('.project-card');
+    const loadMoreBtn = document.getElementById('load-more-btn');
 
     filterButtons.forEach(btn => {
         btn.addEventListener('click', function() {
@@ -171,30 +173,44 @@ function initProjectFilters() {
             this.classList.add('active');
             
             const filterValue = this.getAttribute('data-filter');
+            let visibleCount = 0;
             
+            // Reset all cards to normal state first (removing hidden class)
             projectCards.forEach(card => {
-                if (filterValue === 'all') {
-                    card.style.display = 'block';
-                    setTimeout(() => {
-                        card.style.opacity = '1';
-                        card.style.transform = 'scale(1)';
-                    }, 50);
-                } else {
-                    if (card.getAttribute('data-category').includes(filterValue)) {
-                        card.style.display = 'block';
+                card.classList.remove('hidden');
+                card.style.display = 'block';
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.8)';
+            });
+            
+            // Apply filtering
+            projectCards.forEach((card, index) => {
+                if (filterValue === 'all' || card.getAttribute('data-category').includes(filterValue)) {
+                    visibleCount++;
+                    // Show only first 4 filtered items initially
+                    if (visibleCount <= 4) {
                         setTimeout(() => {
                             card.style.opacity = '1';
                             card.style.transform = 'scale(1)';
-                        }, 50);
+                        }, 50 * visibleCount);
                     } else {
-                        card.style.opacity = '0';
-                        card.style.transform = 'scale(0.8)';
-                        setTimeout(() => {
-                            card.style.display = 'none';
-                        }, 300);
+                        // Hide additional items
+                        card.classList.add('hidden');
                     }
+                } else {
+                    // Hide non-matching items
+                    setTimeout(() => {
+                        card.style.display = 'none';
+                    }, 300);
                 }
             });
+            
+            // Show or hide load more button based on filtered results
+            if (visibleCount > 4) {
+                loadMoreBtn.style.display = 'inline-block';
+            } else {
+                loadMoreBtn.style.display = 'none';
+            }
         });
     });
 }
@@ -231,13 +247,7 @@ function initModalFunctionality() {
             images: ['images/projects/roll-anim.webp'],
             description: `
                 <p>This 3D dice rolling simulator creates a realistic and satisfying experience for tabletop gamers.</p>
-                <ul>
-                    <li>3D rendered dice with realistic physics</li>
-                    <li>Multiple dice types (d4, d6, d8, d10, d12, d20, d100)</li>
-                    <li>Customizable dice appearances and themes</li>
-                    <li>Sound effects for enhanced immersion</li>
-                    <li>Ability to roll multiple dice simultaneously</li>
-                </ul>
+
                 <p>Built with JavaScript and Three.js, this tool demonstrates my ability to create interactive 3D web applications.</p>
             `,
             technologies: ['JavaScript', 'Three.js', 'CSS3', 'HTML5', 'Physics Engine'],
@@ -249,13 +259,6 @@ function initModalFunctionality() {
             images: ['images/projects/flip-anim.webp'],
             description: `
                 <p>An interactive tarot card experience that lets users draw cards with beautiful animations.</p>
-                <ul>
-                    <li>Complete 78-card deck with custom illustrations</li>
-                    <li>Card flip animations and meaningful transitions</li>
-                    <li>Detailed interpretations for each card</li>
-                    <li>Support for different reading layouts (3-card spread, Celtic Cross, etc.)</li>
-                    <li>Save and share your readings</li>
-                </ul>
                 <p>This project combines CSS animations with JavaScript logic to create a fluid, engaging user experience.</p>
             `,
             technologies: ['HTML5', 'CSS3', 'JavaScript', 'Animation', 'Web Storage API'],
@@ -475,4 +478,49 @@ function initEmailProtection() {
             showEmailBtn.style.display = 'none';
         });
     }
+}
+
+// Initialize project loading functionality
+function initProjectLoading() {
+    const projectCards = document.querySelectorAll('.project-card');
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    const initialVisibleCount = 4; // Show only 4 projects initially
+    let visibleCount = initialVisibleCount;
+    
+    // Hide projects beyond the initial count
+    if (projectCards.length > initialVisibleCount) {
+        for (let i = initialVisibleCount; i < projectCards.length; i++) {
+            projectCards[i].classList.add('hidden');
+        }
+        
+        // Show load more button
+        loadMoreBtn.style.display = 'inline-block';
+    } else {
+        // Hide button if not enough projects
+        loadMoreBtn.style.display = 'none';
+    }
+    
+    // Load more button click handler
+    loadMoreBtn.addEventListener('click', function() {
+        // Show next batch of projects (4 more)
+        const batchSize = 4;
+        const maxVisible = Math.min(visibleCount + batchSize, projectCards.length);
+        
+        for (let i = visibleCount; i < maxVisible; i++) {
+            projectCards[i].classList.remove('hidden');
+            
+            // Trigger animation with slight delay for each card
+            setTimeout(() => {
+                projectCards[i].style.opacity = '1';
+                projectCards[i].style.transform = 'translateY(0)';
+            }, 100 * (i - visibleCount));
+        }
+        
+        visibleCount = maxVisible;
+        
+        // Hide button if all projects are visible
+        if (visibleCount >= projectCards.length) {
+            loadMoreBtn.style.display = 'none';
+        }
+    });
 }
