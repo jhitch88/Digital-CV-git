@@ -359,11 +359,42 @@ document.addEventListener('DOMContentLoaded', function() {
     allButtons.forEach(btn => {
       btn.removeEventListener('mouseenter', resetAllClickHandlers);
     });
-  }
-    // Add touch support for mobile devices
+  }    // Add touch support for mobile devices for resume sidebar buttons
   document.querySelectorAll('.sidebar-button').forEach(btn => {
+    // Store which button function to call
+    let updateFunction;
+    const imgName = btn.querySelector('img')?.getAttribute('name');
+    if (imgName === 'educate_bttn') {
+      updateFunction = updateEducationContent;
+    } else if (imgName === 'history_bttn') {
+      updateFunction = updateHistoryContent;
+    } else if (imgName === 'continue_bttn') {
+      updateFunction = updateContinueContent;
+    }
+    
+    // Add touchstart event
     btn.addEventListener('touchstart', function(e) {
       e.preventDefault(); // Prevent scrolling
+      
+      // Apply the hover effect on touch
+      if (updateFunction) {
+        updateFunction();
+        
+        // Highlight this button visually
+        btn.classList.add('active');
+        
+        // Reset all buttons when touching anywhere else
+        const resetTouch = function(evt) {
+          if (!btn.contains(evt.target)) {
+            resetContent();
+            btn.classList.remove('active');
+            document.removeEventListener('touchstart', resetTouch);
+          }
+        };
+        
+        // Add listener to detect touches elsewhere
+        document.addEventListener('touchstart', resetTouch);
+      }
     });
   });
   
