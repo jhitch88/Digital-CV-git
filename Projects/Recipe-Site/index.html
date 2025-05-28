@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Keeper</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4CAF50">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <h1>🍳 Recipe Keeper</h1>
+            <div class="header-controls">
+                <button id="wake-lock-btn" class="wake-lock-btn" title="Keep screen on">
+                    <span class="wake-lock-icon">☀️</span>
+                    <span class="wake-lock-text">Screen Lock</span>
+                </button>
+                <button id="add-recipe-btn" class="add-btn">+ Add Recipe</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Recipe List View -->
+            <div id="recipe-list-view" class="view active">
+                <div class="search-container">
+                    <input type="text" id="recipe-search" placeholder="Search recipes..." class="search-input">
+                </div>
+                <div id="recipe-grid" class="recipe-grid">
+                    <!-- Recipes will be populated here -->
+                </div>
+                <div id="empty-state" class="empty-state">
+                    <h2>No recipes yet!</h2>
+                    <p>Click "Add Recipe" to create your first recipe.</p>
+                </div>
+            </div>
+
+            <!-- Recipe Detail View -->
+            <div id="recipe-detail-view" class="view">
+                <div class="recipe-header">
+                    <button id="back-btn" class="back-btn">← Back</button>
+                    <div class="recipe-actions">
+                        <button id="edit-recipe-btn" class="edit-btn">Edit</button>
+                        <button id="delete-recipe-btn" class="delete-btn">Delete</button>
+                    </div>
+                </div>
+                <div id="recipe-content" class="recipe-content">
+                    <!-- Recipe details will be populated here -->
+                </div>
+            </div>
+
+            <!-- Add/Edit Recipe View -->
+            <div id="recipe-form-view" class="view">
+                <div class="form-header">
+                    <button id="cancel-btn" class="back-btn">← Cancel</button>
+                    <h2 id="form-title">Add New Recipe</h2>
+                </div>
+                <form id="recipe-form" class="recipe-form">
+                    <div class="form-group">
+                        <label for="recipe-name">Recipe Name *</label>
+                        <input type="text" id="recipe-name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recipe-description">Description</label>
+                        <textarea id="recipe-description" rows="3" placeholder="Brief description of the recipe..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prep-time">Prep Time (minutes)</label>
+                        <input type="number" id="prep-time" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cook-time">Cook Time (minutes)</label>
+                        <input type="number" id="cook-time" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="servings">Servings</label>
+                        <input type="number" id="servings" min="1">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ingredients *</label>
+                        <div id="ingredients-container" class="ingredients-container">
+                            <div class="ingredient-item">
+                                <input type="text" placeholder="e.g., 2 cups flour" class="ingredient-input" required>
+                                <button type="button" class="remove-ingredient">×</button>
+                            </div>
+                        </div>
+                        <button type="button" id="add-ingredient" class="add-item-btn">+ Add Ingredient</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Steps *</label>
+                        <div id="steps-container" class="steps-container">
+                            <div class="step-item">
+                                <span class="step-number">1</span>
+                                <textarea placeholder="Describe the step..." class="step-input" required></textarea>
+                                <button type="button" class="remove-step">×</button>
+                            </div>
+                        </div>
+                        <button type="button" id="add-step" class="add-item-btn">+ Add Step</button>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="save-btn">Save Recipe</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
