@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootlicker Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>Bootlicker Simulator</h1>        <div class="game-info">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <p class="progress-text">Progress: <span id="progress-percent">0%</span></p>
+            <div class="timer-container">
+                <p class="timer-text">Time: <span id="timer-display">0.00s</span></p>
+            </div>
+        </div>
+        <div class="canvas-container">
+            <canvas id="gameCanvas" width="600" height="600"></canvas>
+        </div>        <div class="controls">
+            <button id="startBtn">Start Game</button>
+            <button id="resetBtn">Reset</button>
+            <div class="color-selection">
+                <h3>Choose Boot Color:</h3>
+                <button class="color-btn" data-color="green">Green</button>
+                <button class="color-btn" data-color="red">Red</button>
+            </div>
+        </div>
+        <div class="leaderboard">
+            <h3>🏆 Personal Best Times</h3>
+            <ul class="leaderboard-list">
+                <li class="no-scores">No scores yet - play to set your first record!</li>
+            </ul>
+            <button id="clearLeaderboardBtn" class="clear-btn">Clear Leaderboard</button>
+        </div>
+        <div class="instructions">
+            <h3>How to Play:</h3>
+            <p>🖱️ <strong>Desktop:</strong> Move your mouse over the colored boot to lick it clean!</p>
+            <p>📱 <strong>Mobile:</strong> Touch and drag your finger over the boot to lick it clean!</p>
+            <p>🎯 <strong>Goal:</strong> Remove all the color from the boot to win!</p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
