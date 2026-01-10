@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Taxi Finder - Best Cab Ranking System</title>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚖 Taxi Finder</h1>
+            <p>Find the best taxi company for your trip with our intelligent ranking system</p>
+        </div>
+
+        <div class="main-content">
+            <form class="trip-form" id="tripForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fromLocation">Pickup Location</label>
+                        <div class="location-input-container">
+                            <select id="fromLocationSelect">
+                                <option value="">Choose from common locations</option>
+                                <option value="1234 Main St, Downtown">1234 Main St, Downtown</option>
+                                <option value="567 Oak Ave, Uptown">567 Oak Ave, Uptown</option>
+                                <option value="Metro City Airport, 890 Aviation Blvd">Metro City Airport, 890 Aviation Blvd</option>
+                                <option value="Central Park Entrance, 100 Park Ave">Central Park Entrance, 100 Park Ave</option>
+                                <option value="City Hall, 200 Government Plaza">City Hall, 200 Government Plaza</option>
+                                <option value="Suburban Mall, 3456 Shopping Center Dr">Suburban Mall, 3456 Shopping Center Dr</option>
+                                <option value="custom">+ Enter Custom Address</option>
+                            </select>
+                            <input type="text" id="fromLocationCustom" placeholder="Enter pickup address..." style="display: none;" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="toLocation">Destination</label>
+                        <div class="location-input-container">
+                            <select id="toLocationSelect">
+                                <option value="">Choose from common destinations</option>
+                                <option value="Metro General Hospital ER, 456 Medical Center Dr">Metro General Hospital ER, 456 Medical Center Dr</option>
+                                <option value="St. Mary's Hospital, 789 Healthcare Blvd">St. Mary's Hospital, 789 Healthcare Blvd</option>
+                                <option value="Downtown Medical Plaza, 321 Health St">Downtown Medical Plaza, 321 Health St</option>
+                                <option value="Metro City Airport, 890 Aviation Blvd">Metro City Airport, 890 Aviation Blvd</option>
+                                <option value="Uptown Senior Center, 654 Elder Care Way">Uptown Senior Center, 654 Elder Care Way</option>
+                                <option value="Physical Therapy Clinic, 987 Rehab Ave">Physical Therapy Clinic, 987 Rehab Ave</option>
+                                <option value="Downtown Dialysis Center, 147 Treatment St">Downtown Dialysis Center, 147 Treatment St</option>
+                                <option value="City Hall, 200 Government Plaza">City Hall, 200 Government Plaza</option>
+                                <option value="custom">+ Enter Custom Address</option>
+                            </select>
+                            <input type="text" id="toLocationCustom" placeholder="Enter destination address..." style="display: none;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Medical Transport Requirements</label>
+                        <div class="transport-options">
+                            <div class="transport-option">
+                                <input type="radio" id="standardTransport" name="transportType" value="standard" checked>
+                                <label for="standardTransport">
+                                    <strong>Standard Transport</strong><br>
+                                    <span class="option-desc">Regular vehicle, ambulatory passenger</span>
+                                </label>
+                            </div>
+                            <div class="transport-option">
+                                <input type="radio" id="wheelchairTransport" name="transportType" value="wheelchair">
+                                <label for="wheelchairTransport">
+                                    <strong>Wheelchair Accessible</strong><br>
+                                    <span class="option-desc">Vehicle with wheelchair ramp or lift</span>
+                                </label>
+                            </div>
+                            <div class="transport-option">
+                                <input type="radio" id="stretcherTransport" name="transportType" value="stretcher">
+                                <label for="stretcherTransport">
+                                    <strong>Stretcher Transport</strong><br>
+                                    <span class="option-desc">Medical transport vehicle with stretcher capability</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="search-btn">Find Best Taxi Options</button>
+            </form>
+
+            <div id="resultsSection" class="results-section hidden">
+                <div class="results-header">
+                    <h2>🎯 Trip Results</h2>
+                    <div class="trip-summary" id="tripSummary">
+                        <!-- Summary will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div id="recommendations" class="recommendations">
+                    <h3>💡 Quick Recommendations</h3>
+                    <div class="rec-grid" id="recGrid">
+                        <!-- Recommendations will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="rankings-grid" id="rankingsGrid">
+                    <!-- Rankings will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="cabcos.js"></script>
+    <script src="cabresults.js"></script>
+</body>
+</html>
