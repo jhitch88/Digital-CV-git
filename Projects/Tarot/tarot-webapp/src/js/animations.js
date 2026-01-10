@@ -68,16 +68,26 @@ function initCardAnimations() {
         button.addEventListener('mouseenter', () => {
             if (!buttonFireflies) {
                 buttonFireflies = createFireflies(button);
+                // Fade in the fireflies
+                setTimeout(() => {
+                    buttonFireflies.style.opacity = '1';
+                }, 10);
                 
                 // Update fireflies position when button state changes
                 document.addEventListener('cardFlipped', () => {
                     updateFirefliesPosition(resetButton);
                 });
-                
-                // Keep fireflies fresh by periodically regenerating them
-                setInterval(() => {
-                    refreshFireflies(buttonFireflies);
-                }, 5000);
+            } else {
+                // If fireflies already exist, just fade them back in
+                buttonFireflies.classList.remove('fade-out');
+                buttonFireflies.style.opacity = '1';
+            }
+        });
+        
+        button.addEventListener('mouseleave', () => {
+            if (buttonFireflies) {
+                // Smooth fade out when mouse leaves
+                buttonFireflies.style.opacity = '0';
             }
         });
     });
@@ -103,6 +113,7 @@ function updateFirefliesPosition(element) {
 function createFireflies(element) {
     const container = document.createElement('div');
     container.className = 'fireflies-container';
+    container.style.opacity = '0';
     
     // Position container around the element
     const elementRect = element.getBoundingClientRect();
@@ -124,7 +135,8 @@ function createFireflies(element) {
         firefly.style.top = `${Math.random() * 100}%`;
         firefly.style.setProperty('--random-x', Math.random());
         firefly.style.setProperty('--random-y', Math.random());
-        firefly.style.animationDuration = `${5 + Math.random() * 7}s`;
+        firefly.style.animationDuration = `${6 + Math.random() * 6}s`;
+        firefly.style.animationDelay = `${Math.random() * 2}s`;
         container.appendChild(firefly);
     }
     

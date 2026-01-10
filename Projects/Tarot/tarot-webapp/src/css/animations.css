@@ -59,7 +59,7 @@
   background: rgba(255, 223, 148, 0.8);
   border-radius: 50%;
   filter: blur(1px);
-  animation: firefly-float 2s ease-in-out infinite;
+  animation: firefly-float 8s ease-in-out infinite;
   opacity: 0;
 }
 
@@ -68,11 +68,11 @@
 }
 
 @keyframes firefly-float {
-  0%, 100% {
+  0% {
       transform: translate(0, 0);
       opacity: 0;
   }
-  20%, 80% {
+  10% {
       opacity: 1;
   }
   50% {
@@ -80,6 +80,14 @@
           calc(50px - 100px * var(--random-x, 0.5)),
           calc(50px - 100px * var(--random-y, 0.5))
       );
+      opacity: 1;
+  }
+  90% {
+      opacity: 1;
+  }
+  100% {
+      transform: translate(0, 0);
+      opacity: 1;
   }
 }
 

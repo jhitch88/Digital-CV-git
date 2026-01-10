@@ -3,495 +3,306 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>James Hitchcock's Digital CV</title>
+    <title>Jimmy Hitchcock - Project Repository</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <!-- Linking the google font 'Roboto Flex' -->
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap" rel="stylesheet">
-    <!-- Font Awesome for icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   </head>
   <body>
-    <header id="#top">
-      <div class="header-left">
-        <h1>James (Jimmy) Hitchcock</h1>
-        <div class="theme-toggle">
-          <i class="fas fa-moon"></i>
-          <i class="fas fa-sun"></i>
+    <nav class="navbar">
+      <div class="nav-content">
+        <h1 class="logo">Jimmy Hitchcock</h1>
+        <div class="nav-links">
+          <a href="#projects">Projects</a>
+          <a href="#about">About</a>
+          <a href="#contact">Contact</a>
+          <button class="theme-toggle" aria-label="Toggle theme">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+          </button>
         </div>
+        <button class="mobile-menu-toggle">
+          <i class="fas fa-bars"></i>
+        </button>
       </div>
-      <nav>
-        <ul class="nav-links">
-          <li><a href="#about" class="nav-link">About</a></li>
-          <li><a href="#skills" class="nav-link">Skills</a></li>
-          <li><a href="#toolkit" class="nav-link">Toolkit</a></li>
-          <li><a href="#projects" class="nav-link">Projects</a></li>
-          <li><a href="#contact" class="nav-link">Contact</a></li>
-        </ul>
-      </nav>
-      <!-- Mobile navigation toggle button -->
-      <div class="menu-toggle">
-        <i class="fas fa-bars"></i>
-      </div>
-    </header>
-    
+    </nav>
+
     <main>
-      <section id="about" class="section-container">
-        <div class="intro-container">
-          <img src="images/5298741167699985950.jpeg" alt="A picture of me on my way back home on a ferry" id="profile-pic">
-          <div class="intro-text">
-            <h2 class="section-title">About Me</h2>
-            <p>I'm learning software development to enhance my career, assist on cool projects, and help others realize their dreams.
-              <br>As I am passionate about video game development I will also make video games leveraging the skills of software development.
-            </p>
-          </div>
-        </div>
-        
-        <div class="personal-details">
-          <h3>Contact Details</h3>
-          <p><i class="fas fa-user"></i> James Hitchcock</p>
-          <p><i class="fas fa-map-marker-alt"></i> Bellingham, Washington</p>
-          <p><i class="fas fa-envelope"></i> <span id="email-container"><button id="show-email" class="email-button">Show Email</button><span id="email-address" class="hidden-email"></span></span></p>
-        </div>
-      </section>
-      
-      <!-- Skills section with skill bars -->
-      <section id="skills" class="section-container skills">
-        <h2 class="section-title">Skills</h2>
-        <div class="skills-container">
-          <div class="skill-category">
-            <h3>Software Development</h3>
-            <div class="skill-item">
-              <span class="skill-name">HTML</span>
-              <div class="skill-bar">
-                <div class="skill-level" data-level="75"></div>
-              </div>
-            </div>
-            <div class="skill-item">
-              <span class="skill-name">CSS</span>
-              <div class="skill-bar">
-                <div class="skill-level" data-level="78"></div>
-              </div>
-            </div>
-            <div class="skill-item">
-              <span class="skill-name">JavaScript</span>
-              <div class="skill-bar">
-                <div class="skill-level" data-level="80"></div>
-              </div>
-            </div>
-            <div class="skill-item">
-              <span class="skill-name">Python</span>
-              <div class="skill-bar">
-                <div class="skill-level" data-level="30"></div>
-              </div>
-            </div>
-            <div class="skill-item">
-              <span class="skill-name">SQL</span>
-              <div class="skill-bar">
-                <div class="skill-level" data-level="40"></div>
-              </div>
-            </div>
-            <div class="skill-item">
-              <span class="skill-name">Java</span>
-              <div class="skill-bar">
-                <div class="skill-level" data-level="25"></div>
-              </div>
-            </div>
-            <div class="skill-item">
-              <span class="skill-name">React</span>
-              <div class="skill-bar">
-                <div class="skill-level" data-level="30"></div>
-              </div>
-            </div>
-            <div class="skill-item">
-              <span class="skill-name">Adobe Suite</span>
-              <div class="skill-bar">
-                <div class="skill-level" data-level="60"></div>
-              </div>
-            </div>
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="hero-content">
+          <h2 class="hero-title">Developer & Creative</h2>
+          <p class="hero-subtitle">Building interactive experiences through code and design</p>
+          <div class="hero-tags">
+            <span><i class="fas fa-code"></i> JavaScript</span>
+            <span><i class="fas fa-gamepad"></i> Games</span>
+            <span><i class="fas fa-palette"></i> Design</span>
           </div>
         </div>
       </section>
-      
-      <!-- Toolkit section updated with icons -->
-      <section id="toolkit" class="section-container toolkit">
-        <h2 class="section-title">My Toolkit</h2>
-        <div class="toolkit-grid">
-          <div class="toolkit-item">
-            <i class="fas fa-bolt"></i>
-            <h3>Quick Learner</h3>
-            <p>Turn-around on projects is quick and learning new skills is fun. Let me at a project and I'll learn exactly what needs to be done and how to acheive those lofty goals.</p>
-            <!-- <div class="toolkit-tools">VS Code</div> -->
-          </div>
-          <div class="toolkit-item">
-            <i class="fas fa-lightbulb"></i>
-            <h3>Creativity</h3>
-            <p>My background in design, tabletop roleplaying games and podcasting lend themselves to deep pursuits of creative subjects. Many small projects needing full design leading to learning lots of tools, software, and changing how I think.</p>
-            <!-- <div class="toolkit-tools">Adobe creative suite, Microsoft Suite, Blender, Unreal Engine 5</div> -->
-          </div>
-          <div class="toolkit-item">
-            <i class="fas fa-search"></i>
-            <h3>Detail-Oriented</h3>
-            <p>My love of video games and tabletop roleplaying games make me a stickler for details. Catch me accidentally finding ways to become ultra-powerful and back-pedaling so that I can still maximize fun for everyone.</p>
-            <!-- <div class="toolkit-tools">Github, Slack, Tape (organization workflow)</div> -->
-          </div>
-          <div class="toolkit-item">
-            <i class="fas fa-chart-line"></i>
-            <h3>Passion for improvement</h3>
-            <p>I know there is always something more to learn and am excited and curious to continue learning indefinitely. I simply know that I don't everything and seek to understand more each day.</p>
-            <!-- <div class="toolkit-tools">Springboard learning, my general vibe</div> -->
-          </div>
-        </div>
-      </section>
-      
-      <!-- Projects section with cards and modal functionality -->
-      <section id="projects" class="section-container projects">
-        <h2 class="section-title">Projects</h2>
+
+      <!-- Bento Grid Section -->
+      <section id="projects" class="bento-section">
+        <h2 class="section-title">Featured Projects</h2>
         
-        <div class="filter-buttons">
-          <button class="filter-btn active" data-filter="all">All</button>
-          <button class="filter-btn" data-filter="web">Web</button>
-          <button class="filter-btn" data-filter="games">Games</button>
-          <button class="filter-btn" data-filter="tools">Tools</button>
-        </div>
-        
-        <div class="projects-grid" id="projects-grid">
-          <!-- Project 1 -->
-          <div class="project-card" data-category="web">
-            <div class="project-image">
-              <img src="images/projects/login.gif" alt="An example of a login screen" loading="lazy">
-              <div class="project-overlay">
-                <button class="view-project-btn" data-project="login-screen">View Details</button>
-                <a href="Projects/Login screen/index.html" class="open-project-btn" target="_blank">Open Project</a>
+        <div class="bento-grid">
+          <!-- Featured: Cluedo Game - Large -->
+          <div class="bento-item featured cluedo" data-aos="fade-up">
+            <div class="bento-content">
+              <div class="bento-badge">Featured</div>
+              <div class="project-info">
+                <h3>Cluedo Detective Game</h3>
+                <p>Solve the mystery AND organize the clumsy cat's files to catch the killer! A unique twist on the classic whodunit.</p>
+                <div class="tech-stack">
+                  <span>JavaScript Game Logic</span>
+                  <span>CSS Answer Tracking</span>
+                </div>
+                <div class="project-links">
+                  <a href="Projects/Cluedo/index.html" target="_blank" class="btn-primary">
+                    <i class="fas fa-play"></i> Play Game
+                  </a>
+                  <a href="Projects/Cluedo/index.html" target="_blank" class="btn-secondary">
+                    <i class="fas fa-external-link-alt"></i>
+                  </a>
+                </div>
               </div>
             </div>
-            <h3>Interactive Login Screen</h3>
-            <p>A modern login interface with animated background elements and interactive form validation.</p>
-            <div class="project-tags">
-              <span>HTML</span>
-              <span>CSS</span>
-              <span>JavaScript</span>
-            </div>
           </div>
-          
-          <!-- Tic Tac Toe Game -->
-          <div class="project-card" data-category="games">
-            <div class="project-image">
-              <img src="images/projects/tic-tac-toe.webp" alt="Tic Tac Toe Game" loading="lazy">
-              <div class="project-overlay">
-                <a href="Projects/tictactoe/index.html" class="open-project-btn" target="_blank">Play Game</a>
+
+          <!-- Featured: Weather API - Large -->
+          <div class="bento-item featured weather" data-aos="fade-up" data-aos-delay="100">
+            <div class="bento-content">
+              <div class="bento-badge">Featured</div>
+              <div class="project-info">
+                <h3>Weather Dashboard</h3>
+                <p>Real-time weather data with visualizations. Get current conditions and forecasts for your location.</p>
+                <div class="tech-stack">
+                  <span>API Integration</span>
+                  <span>Async JS</span>
+                  <span>Responsive Design</span>
+                </div>
+                <div class="project-links">
+                  <a href="Projects/API practice/index.html" target="_blank" class="btn-primary">
+                    <i class="fas fa-cloud-sun"></i> View App
+                  </a>
+                  <a href="Projects/API practice/index.html" target="_blank" class="btn-secondary">
+                    <i class="fas fa-external-link-alt"></i>
+                  </a>
+                </div>
               </div>
             </div>
-            <h3>Tic Tac Toe</h3>
-            <p>A classic game of X's and O's with a modern interface and victory animations.</p>
-            <div class="project-tags">
-              <span>HTML</span>
-              <span>CSS</span>
-              <span>JavaScript</span>
-              <span>Game</span>
-            </div>
           </div>
-          
-          <!-- Tennis Game -->
-          <div class="project-card" data-category="games">
-            <div class="project-image">
-              <img src="images/projects/tennis.webp" alt="Tennis Game" loading="lazy">
-              <div class="project-overlay">
-                <a href="Projects/Tennis/game.html" class="open-project-btn" target="_blank">Play Game</a>
+
+          <!-- Featured: Recipe Site - Large -->
+          <div class="bento-item featured recipe" data-aos="fade-up" data-aos-delay="200">
+            <div class="bento-content">
+              <div class="bento-badge">Featured</div>
+              <div class="project-info">
+                <h3>Recipe Keeper</h3>
+                <p>A PWA for managing your favorite recipes. Features offline storage, screen wake lock, and mobile-optimized cooking mode.</p>
+                <div class="tech-stack">
+                  <span>PWA</span>
+                  <span>LocalStorage</span>
+                  <span>Wake Lock API</span>
+                </div>
+                <div class="project-links">
+                  <a href="Projects/Recipe-Site/index.html" target="_blank" class="btn-primary">
+                    <i class="fas fa-utensils"></i> Open App
+                  </a>
+                  <a href="Projects/Recipe-Site/index.html" target="_blank" class="btn-secondary">
+                    <i class="fas fa-external-link-alt"></i>
+                  </a>
+                </div>
               </div>
             </div>
-            <h3>Tennis Game</h3>
-            <p>A fast-paced Pong-style tennis game using HTML Canvas.</p>
-            <div class="project-tags">
-              <span>HTML</span>
-              <span>Canvas</span>
-              <span>JavaScript</span>
-              <span>Game</span>
-            </div>
           </div>
-          
-          <!-- Cluedo Game -->
-          <div class="project-card" data-category="games">
-            <div class="project-image">
-              <img src="images/projects/cluedo.webp" alt="Cluedo Game" loading="lazy">
-              <div class="project-overlay">
-                <a href="Projects/Cluedo/index.html" class="open-project-btn" target="_blank">Play Game</a>
+
+          <!-- Smaller Projects -->
+          <div class="bento-item small tarot" data-aos="fade-up">
+            <div class="bento-content">
+              <div class="project-info compact">
+                <i class="fas fa-moon project-icon"></i>
+                <h4>Tarot Reader</h4>
+                <p>Interactive card drawing with flip animations</p>
+                <a href="Projects/Tarot/tarot-webapp/src/cardflip.html" target="_blank" class="btn-small">
+                  <i class="fas fa-arrow-right"></i>
+                </a>
               </div>
             </div>
-            <h3>Cluedo Game</h3>
-            <p>Solve the clue-style case AND organize the clumsy cats files to catch the killer!</p>
-            <div class="project-tags">
-              <span>HTML</span>
-              <span>CSS</span>
-              <span>JavaScript</span>
-              <span>Game</span>
-            </div>
           </div>
-          
-          <!-- MadLib Generator -->
-          <div class="project-card" data-category="games">
-            <div class="project-image">
-              <img src="images/projects/wildlibs.png" alt="MadLib Generator" loading="lazy">
-              <div class="project-overlay">
-                <a href="Projects/MadLib/index.html" class="open-project-btn" target="_blank">Play Game</a>
+
+          <div class="bento-item small tictactoe" data-aos="fade-up" data-aos-delay="50">
+            <div class="bento-content">
+              <div class="project-info compact">
+                <i class="fas fa-th project-icon"></i>
+                <h4>Tic Tac Toe</h4>
+                <p>Classic game with modern UI</p>
+                <a href="Projects/tictactoe/index.html" target="_blank" class="btn-small">
+                  <i class="fas fa-arrow-right"></i>
+                </a>
               </div>
             </div>
-            <h3>MadLib Generator</h3>
-            <p>Create hilarious stories by filling in the blanks with random words.</p>
-            <div class="project-tags">
-              <span>HTML</span>
-              <span>CSS</span>
-              <span>JavaScript</span>
-              <span>Game</span>
-            </div>
           </div>
-          
-          <!-- Project 2 -->
-          <div class="project-card" data-category="tools">
-            <div class="project-image">
-              <img src="images/projects/roll-anim.webp" alt="A Spinning 20 sided die" loading="lazy">
-              <div class="project-overlay">
-                <button class="view-project-btn" data-project="dice-roller">View Details</button>
-                <a href="Projects/D20/index.html" class="open-project-btn" target="_blank">Open Project</a>
+
+          <div class="bento-item small dice" data-aos="fade-up" data-aos-delay="100">
+            <div class="bento-content">
+              <div class="project-info compact">
+                <i class="fas fa-dice-d20 project-icon"></i>
+                <h4>D20 Dice Roller</h4>
+                <p>3D dice with physics simulation</p>
+                <a href="Projects/D20/index.html" target="_blank" class="btn-small">
+                  <i class="fas fa-arrow-right"></i>
+                </a>
               </div>
             </div>
-            <h3>Satisfying Digital Dice Roller</h3>
-            <p>A 3D dice rolling experience with immersive animation and random results.</p>
-            <div class="project-tags">
-              <span>JavaScript</span>
-              <span>Three.js</span>
-              <span>CSS3</span>
-            </div>
           </div>
-          
-          <!-- Project 3 -->
-          <div class="project-card" data-category="tools">
-            <div class="project-image">
-              <img src="images/projects/flip-anim.webp" alt="Tarot Card" loading="lazy">
-              <div class="project-overlay">
-                <button class="view-project-btn" data-project="tarot">View Details</button>
-                <a href="Projects/Tarot/tarot-webapp/src/cardflip.html" class="open-project-btn" target="_blank">Open Project</a>
+
+          <div class="bento-item small magic8" data-aos="fade-up" data-aos-delay="150">
+            <div class="bento-content">
+              <div class="project-info compact">
+                <i class="fas fa-circle project-icon"></i>
+                <h4>Magic 8 Ball</h4>
+                <p>Digital fortune-telling toy</p>
+                <a href="Projects/Magic8/index.html" target="_blank" class="btn-small">
+                  <i class="fas fa-arrow-right"></i>
+                </a>
               </div>
             </div>
-            <h3>Tarot Card Picker</h3>
-            <p>Interactive card drawing with animations and tarot interpretations.</p>
-            <div class="project-tags">
-              <span>HTML</span>
-              <span>CSS</span>
-              <span>JavaScript</span>
-            </div>
           </div>
-          
-          <!-- Weather App -->
-          <div class="project-card" data-category="web">
-            <div class="project-image">
-              <img src="images/projects/weather.webp" alt="Weather App" loading="lazy">
-              <div class="project-overlay">
-                <a href="Projects/API practice/index.html" class="open-project-btn" target="_blank">Open Project</a>
+
+          <div class="bento-item small tennis" data-aos="fade-up" data-aos-delay="200">
+            <div class="bento-content">
+              <div class="project-info compact">
+                <i class="fas fa-table-tennis project-icon"></i>
+                <h4>Tennis Game</h4>
+                <p>Fast-paced Pong-style action</p>
+                <a href="Projects/Tennis/game.html" target="_blank" class="btn-small">
+                  <i class="fas fa-arrow-right"></i>
+                </a>
               </div>
             </div>
-            <h3>Weather API App</h3>
-            <p>A responsive weather application that fetches real-time weather data.</p>
-            <div class="project-tags">
-              <span>HTML</span>
-              <span>CSS</span>
-              <span>JavaScript</span>
-              <span>API</span>
-            </div>
           </div>
-          
-          <!-- Ghibli Gallery -->
-          <div class="project-card" data-category="tools">
-            <div class="project-image">
-              <img src="images/projects/ghibli.webp" alt="Ghibli Gallery" loading="lazy">
-              <div class="project-overlay">
-                <a href="Projects/Ghibli Images/index.html" class="open-project-btn" target="_blank">Open Project</a>
+
+          <div class="bento-item small madlib" data-aos="fade-up" data-aos-delay="250">
+            <div class="bento-content">
+              <div class="project-info compact">
+                <i class="fas fa-smile project-icon"></i>
+                <h4>Mad Libs</h4>
+                <p>Hilarious story generator</p>
+                <a href="Projects/MadLib/index.html" target="_blank" class="btn-small">
+                  <i class="fas fa-arrow-right"></i>
+                </a>
               </div>
             </div>
-            <h3>Ghibli Gallery</h3>
-            <p>An interactive gallery showcasing Studio Ghibli artwork and films.</p>
-            <div class="project-tags">
-              <span>HTML</span>
-              <span>CSS</span>
-              <span>JavaScript</span>
-              <span>Gallery</span>
-            </div>
           </div>
-          
-          <!-- Magic 8 Ball -->
-          <div class="project-card" data-category="tools">
-            <div class="project-image">
-              <img src="images/projects/8ball.webp" alt="Magic 8 Ball" loading="lazy">
-              <div class="project-overlay">
-                <a href="Projects/Magic8/index.html" class="open-project-btn" target="_blank">Open Project</a>
+
+          <!-- About Card -->
+          <div class="bento-item medium about-card" id="about" data-aos="fade-up">
+            <div class="bento-content">
+              <div class="about-content">
+                <div class="avatar">
+                  <img src="images/5298741167699985950.jpeg" alt="Jimmy Hitchcock">
+                </div>
+                <h3>Hey, I'm Jimmy</h3>
+                <p>Developer passionate about creating interactive web experiences, games, and useful tools. Always learning, always building.</p>
+                <div class="about-stats">
+                  <div class="stat">
+                    <strong>15+</strong>
+                    <span>Projects</span>
+                  </div>
+                  <div class="stat">
+                    <strong>4+</strong>
+                    <span>Languages</span>
+                  </div>
+                </div>
               </div>
             </div>
-            <h3>Magic 8 Ball</h3>
-            <p>A digital fortune-telling toy that answers your yes/no questions.</p>
-            <div class="project-tags">
-              <span>HTML</span>
-              <span>CSS</span>
-              <span>JavaScript</span>
-              <span>Animation</span>
-            </div>
           </div>
-          
-          <!-- Recipe Site -->
-          <div class="project-card" data-category="web tools">
-            <div class="project-image">
-              <img src="images/projects/recipe.webp" alt="Recipe Keeper App" loading="lazy">
-              <div class="project-overlay">
-                <a href="Projects/Recipe-Site/index.html" class="open-project-btn" target="_blank">Open Project</a>
-              </div>
-            </div>
-            <h3>Recipe Keeper</h3>
-            <p>A mobile-friendly PWA for managing recipes with screen wake lock and offline storage.</p>
-            <div class="project-tags">
-              <span>HTML</span>
-              <span>CSS</span>
-              <span>JavaScript</span>
-              <span>PWA</span>
-            </div>
-          </div>
-          
+
           <!-- More Projects Card -->
-          <div class="project-card more-projects-card" data-category="web games tools">
-            <div class="more-projects-content">
-              <i class="fas fa-folder-open"></i>
-              <h3>All Projects</h3>
-              <p>View my complete collection of projects:</p>
-              <button id="showAllProjects" class="view-all-btn">View All Projects</button>
+          <div class="bento-item small more-projects" data-aos="fade-up">
+            <div class="bento-content">
+              <div class="project-info compact center">
+                <i class="fas fa-folder-open project-icon"></i>
+                <h4>More Projects</h4>
+                <p>Ghibli Gallery, CSV Converter & more</p>
+                <button class="btn-small view-all-btn">
+                  <i class="fas fa-ellipsis-h"></i>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div class="load-more-container">
-          <button id="load-more-btn" class="load-more-btn">Load More Projects</button>
         </div>
       </section>
-      
-      <!-- Project modals will be inserted here by JavaScript -->
-      <div id="project-modal" class="modal">
-        <div class="modal-content">
-          <span class="close-modal">&times;</span>
-          <div id="modal-content-container"></div>
-        </div>
-      </div>
-      
-      <!-- All Projects Modal -->
-      <div id="all-projects-modal" class="modal">
-        <div class="modal-content">
-          <span class="close-modal">&times;</span>
-          <div id="all-projects-container">
-            <h2>All Projects</h2>
-            <div class="projects-categories">
-              <div class="project-category">
-                <h3>Web Development</h3>
-                <ul class="all-projects-list">
-                  <li><a href="Projects/Login screen/index.html" target="_blank">Login Screen</a></li>
-                  <li><a href="Projects/API practice/index.html" target="_blank">Weather API App</a></li>
-                  <li><a href="index.html" target="_blank">Digital CV</a></li>
-                </ul>
-              </div>
-              
-              <div class="project-category">
-                <h3>Games</h3>
-                <ul class="all-projects-list">
-                  <li><a href="Projects/tictactoe/index.html" target="_blank">Tic Tac Toe</a></li>
-                  <li><a href="Projects/Tennis/game.html" target="_blank">Tennis Game</a></li>
-                  <li><a href="Projects/Cluedo/index.html" target="_blank">Cluedo Game</a></li>
-                  <li><a href="Projects/MadLib/index.html" target="_blank">Mad Lib Generator</a></li>
-                  <li><a href="Projects/BootLicker/index.html" target="_blank">Bootlicker Simulator</a></li>
-                </ul>
-              </div>
-              
-              <div class="project-category">
-                <h3>Fun Tools</h3>
-                <ul class="all-projects-list">
-                  <li><a href="Projects/Tarot/tarot-webapp/src/cardflip.html" target="_blank">Tarot Card Reader</a></li>
-                  <li><a href="Projects/Magic8/index.html" target="_blank">Magic 8 Ball</a></li>
-                  <li><a href="Projects/D20/index.html" target="_blank">D20 Dice Roller</a></li>
-                  <li><a href="Projects/Ghibli Images/index.html" target="_blank">Ghibli Gallery</a></li>
-                </ul>
-              </div>
-            </div>
+
+      <!-- Contact Section -->
+      <section id="contact" class="contact-section">
+        <div class="contact-container">
+          <h2>Let's Connect</h2>
+          <p>Always open to discussing projects, opportunities, or just chatting about code and games.</p>
+          <div class="contact-links">
+            <a href="https://github.com/jhitch88" target="_blank" class="contact-btn">
+              <i class="fab fa-github"></i>
+              <span>GitHub</span>
+            </a>
+            <a href="https://www.linkedin.com/in/james-hitchcock1/" target="_blank" class="contact-btn">
+              <i class="fab fa-linkedin"></i>
+              <span>LinkedIn</span>
+            </a>
+            <button class="contact-btn" id="email-btn">
+              <i class="fas fa-envelope"></i>
+              <span>Email</span>
+            </button>
           </div>
         </div>
-      </div>
+      </section>
     </main>
-    
-    <!-- Contact section with animated form -->
-    <section id="contact" class="section-container contact">
-      <h2 class="section-title">Contact</h2>
-      <div class="contact-container">
-        <div class="contact-info">
-          <h3>Let's Connect!</h3>
-          <p>I'm always open to discussing new projects, creative ideas or opportunities to be part of your vision.</p>
-          <div class="social-links">
-            <a href="https://www.linkedin.com/in/james-hitchcock1/" target="_blank"><i class="fab fa-linkedin"></i></a>
-            <a href="https://github.com/jhitch88" target="_blank"><i class="fab fa-github"></i></a>
+
+    <!-- Modal for All Projects -->
+    <div id="all-projects-modal" class="modal">
+      <div class="modal-content">
+        <button class="close-modal">&times;</button>
+        <h2>All Projects</h2>
+        <div class="projects-list">
+          <div class="project-category-list">
+            <h3>Games</h3>
+            <ul>
+              <li><a href="Projects/Cluedo/index.html" target="_blank">Cluedo Detective Game</a></li>
+              <li><a href="Projects/tictactoe/index.html" target="_blank">Tic Tac Toe</a></li>
+              <li><a href="Projects/Tennis/game.html" target="_blank">Tennis/Pong Game</a></li>
+              <li><a href="Projects/MadLib/index.html" target="_blank">Mad Libs Generator</a></li>
+              <li><a href="Projects/BootLicker/index.html" target="_blank">Boot Licker</a></li>
+            </ul>
           </div>
-        </div>
-        
-        <!-- <div class="form-container">
-          <form id="contact-form" method="post" action="#">
-            <div class="form-group">
-              <input type="text" id="name" name="name" required>
-              <label for="name">Name</label>
-              <span class="form-error"></span>
-            </div>
-            
-            <div class="form-group">
-              <input type="email" id="email" name="email" required>
-              <label for="email" >Email</label>
-              <span class="form-error"></span>
-            </div>
-            
-            <div class="form-group">
-              <select id="reason" name="reason" required>
-                <option value="" disabled selected>Select a reason</option>
-                <option value="Job">Job Offer</option>
-                <option value="Idea">Website Idea</option>
-                <option value="money">You have 1 million dollars for me</option>
-              </select>
-              <span class="form-error"></span>
-            </div>
-            
-            <div class="form-group">
-              <textarea id="message" name="message" rows="5" required></textarea>
-              <label for="message">This form does not have backend support</label>
-              <span class="form-error"></span>
-            </div>
-            
-            <div class="form-group checkbox">
-              <input type="checkbox" id="newsletter" name="newsletter" value="newsletter">
-              <label for="newsletter">Subscribe to my newsletter</label>
-            </div>
-            
-            <div class="button-container">
-              <button type="reset" class="reset-btn">Clear</button>
-              <button type="submit" class="submit-btn">Send Message</button>
-            </div>
-          </form>
-          <div id="form-success" class="hidden">
-            <i class="fas fa-check-circle"></i>
-            <p>Message (not) received successfully!</p>
+          <div class="project-category-list">
+            <h3>Web Apps</h3>
+            <ul>
+              <li><a href="Projects/API practice/index.html" target="_blank">Weather Dashboard</a></li>
+              <li><a href="Projects/Recipe-Site/index.html" target="_blank">Recipe Keeper PWA</a></li>
+              <li><a href="Projects/Login screen/index.html" target="_blank">Interactive Login Screen</a></li>
+              <li><a href="Projects/TaxiFinder/index.html" target="_blank">Taxi Finder</a></li>
+            </ul>
           </div>
-        </div>
-      </div> -->
-    </section>
-    
-    <footer>
-      <div class="footer-content">
-        <small>&copy; Copyright <script>document.write(new Date().getFullYear());</script> - Jimmy Hitchcock</small>
-        <div class="back-to-top">
-          <a href="#top"><i class="fas fa-arrow-up"></i></a>
+          <div class="project-category-list">
+            <h3>Tools & Fun</h3>
+            <ul>
+              <li><a href="Projects/Tarot/tarot-webapp/src/cardflip.html" target="_blank">Tarot Card Reader</a></li>
+              <li><a href="Projects/D20/index.html" target="_blank">D20 Dice Roller</a></li>
+              <li><a href="Projects/Magic8/index.html" target="_blank">Magic 8 Ball</a></li>
+              <li><a href="Projects/Ghibli Images/index.html" target="_blank">Ghibli Image Gallery</a></li>
+              <li><a href="Projects/CSVconverter/index.html" target="_blank">CSV Converter</a></li>
+            </ul>
+          </div>
         </div>
       </div>
+    </div>
+
+    <footer>
+      <p>&copy; <span id="year"></span> Jimmy Hitchcock. Built with curiosity and caffeine.</p>
     </footer>
 
     <script src="script.js"></script>
-    
   </body>
 </html>

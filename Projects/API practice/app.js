@@ -153,17 +153,26 @@ function updateWeatherUI(weatherData, locationName) {
     // Use actual precipitation data instead of estimation
     const precipitation = weatherData.precipitation || 0;
     
-    // Determine cloudiness for cloud display (still need some randomness for visual variety)
-    let cloudiness = Math.random() * 100;
-    if (precipitation > 0) {
-        // More clouds when there's precipitation
-        cloudiness = Math.max(cloudiness, 70);
+    // Use actual cloud cover data from API if available, otherwise estimate
+    // Note: OpenWeatherMap typically provides cloud cover percentage
+    let cloudiness = weatherData.cloudcover || 0;
+    
+    // If no cloud data from API, estimate based on weather conditions
+    if (!weatherData.cloudcover) {
+        if (precipitation > 0) {
+            // High clouds when there's precipitation
+            cloudiness = Math.random() * 30 + 70; // 70-100%
+        } else {
+            // For clear conditions, very low or no clouds
+            cloudiness = Math.random() * 20; // 0-20% (mostly clear)
+        }
     }
     
     // Weather condition determination based on actual data
     const isRainy = precipitation >= 0.1; // Light rain threshold is 0.1mm per hour
     const isWindy = weatherData.windspeed > 15;
     const isCloudy = !isRainy && (cloudiness > 70);
+    const isPartlyCloudy = !isRainy && (cloudiness > 30 && cloudiness <= 70);
     
     // Update weather condition text and UI classes
     let weatherCondition = 'Clear';
@@ -185,14 +194,20 @@ function updateWeatherUI(weatherData, locationName) {
     } else if (isCloudy) {
         document.body.classList.add('cloudy');
         weatherCondition = 'Cloudy';
-    } else if (cloudiness > 30) {
+    } else if (isPartlyCloudy) {
         weatherCondition = 'Partly Cloudy';
     }
     
     document.querySelector('.weather-condition').textContent = weatherCondition;
     
-    // Create clouds based on conditions - only use gray clouds for rain
-    createClouds(cloudiness, isRainy);
+    // Only create clouds if cloudiness is above threshold (30%)
+    // This ensures "Clear" conditions have no clouds
+    if (cloudiness > 30) {
+        createClouds(cloudiness, isRainy);
+    } else {
+        // Clear any existing clouds for clear conditions
+        document.querySelector('.clouds').innerHTML = '';
+    }
     
     // Set up interval to update time (store reference to clear later)
     window.timeUpdateInterval = setInterval(() => {
