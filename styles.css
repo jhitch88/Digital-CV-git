@@ -96,6 +96,13 @@ body {
     align-items: center;
 }
 
+.nav-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+
 .nav-links a {
     color: var(--text-secondary);
     text-decoration: none;
@@ -693,11 +700,38 @@ footer {
 
 @media (max-width: 768px) {
     .nav-links {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border);
+        gap: 0;
         display: none;
+        padding: 1rem;
+    }
+    
+    .nav-links.active {
+        display: flex;
+    }
+    
+    .nav-links a {
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        transition: background-color 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+        background-color: var(--bg-primary);
     }
     
     .mobile-menu-toggle {
         display: block;
+    }
+    
+    .nav-controls {
+        gap: 0.5rem;
     }
     
     .hero {
