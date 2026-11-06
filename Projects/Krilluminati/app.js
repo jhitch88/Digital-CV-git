@@ -1,0 +1,298 @@
+const PLAYERS = [
+  { name: "Steven", color: "#e96945", tint: "#f8e2d9" },
+  { name: "Jimmy", color: "#648b66", tint: "#e3eee2" },
+  { name: "Kasra", color: "#d0a539", tint: "#f7efcf" },
+  { name: "Chris", color: "#6685a1", tint: "#e2ebf1" },
+  { name: "Brady", color: "#9b79a5", tint: "#eee5f0" }
+];
+
+const elements = {
+  championName: document.querySelector("#champion-name"),
+  championTotal: document.querySelector("#champion-total"),
+  championLead: document.querySelector("#champion-lead"),
+  championSubtitle: document.querySelector("#champion-subtitle"),
+  standingsBody: document.querySelector("#standings-body"),
+  chart: document.querySelector("#rank-chart"),
+  legend: document.querySelector("#chart-legend"),
+  roundSelector: document.querySelector("#round-selector"),
+  roundDetail: document.querySelector("#round-detail"),
+  seasonLabel: document.querySelector("#season-label"),
+  daysLogged: document.querySelector("#days-logged"),
+  roundCount: document.querySelector("#round-count"),
+  celebrationParticles: document.querySelector("#celebration-particles"),
+  celebrationAnnouncements: document.querySelector("#celebration-announcements")
+};
+
+let selectedDate = "";
+let visiblePlayers = new Set(PLAYERS.map(({ name }) => name));
+let celebrationTimeout;
+
+function celebrateRound(date) {
+  clearTimeout(celebrationTimeout);
+  elements.celebrationParticles.replaceChildren();
+  elements.celebrationAnnouncements.replaceChildren();
+  const achievements = getDayScores(date).filter(({ event }) => event);
+  if (!achievements.length) return;
+
+  for (const { player, event } of achievements) {
+    const announcement = document.createElement("div");
+    announcement.className = `celebration-card ${event}`;
+    const title = document.createElement("strong");
+    title.textContent = event === "squid" ? "🦑 SQUID PARTY!" : "🦐 ONE IN A KRILLION!";
+    const detail = document.createElement("span");
+    detail.textContent = `${player} · ${formatDate(date)} · ${event === "squid" ? "All squids. All legend." : "A Krillion pick. Legendary catch!"}`;
+    announcement.append(title, detail);
+    elements.celebrationAnnouncements.append(announcement);
+  }
+
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const eventTypes = [...new Set(achievements.map(({ event }) => event))];
+    for (let index = 0; index < 28; index += 1) {
+      const event = eventTypes[index % eventTypes.length];
+      const particle = document.createElement("span");
+      particle.className = `celebration-particle ${event}`;
+      if (event === "squid") particle.textContent = "🦑";
+      particle.style.setProperty("--left", `${3 + Math.random() * 94}%`);
+      particle.style.setProperty("--delay", `${Math.random() * .7}s`);
+      particle.style.setProperty("--drift", `${Math.random() * 100 - 50}px`);
+      particle.style.setProperty("--spin", `${Math.random() * 540 - 270}deg`);
+      particle.style.setProperty("--confetti-color", index % 2 ? "var(--orange)" : "var(--yellow)");
+      elements.celebrationParticles.append(particle);
+    }
+  }
+
+  celebrationTimeout = setTimeout(() => {
+    elements.celebrationParticles.replaceChildren();
+    elements.celebrationAnnouncements.replaceChildren();
+  }, 4500);
+}
+
+function isValidEntry(entry) {
+  if (!entry || typeof entry.date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(entry.date)) return false;
+  const [year, month, day] = entry.date.split("-").map(Number);
+  const parsedDate = new Date(Date.UTC(year, month - 1, day));
+  return parsedDate.getUTCFullYear() === year
+    && parsedDate.getUTCMonth() === month - 1
+    && parsedDate.getUTCDate() === day
+    && PLAYERS.some(({ name }) => name === entry.player)
+    && Number.isInteger(entry.points)
+    && entry.points >= 0
+    && ["", "krillion", "squid"].includes(entry.event || "");
+}
+
+function playerInfo(name) {
+  return PLAYERS.find((player) => player.name === name);
+}
+
+function formatNumber(number) {
+  return new Intl.NumberFormat("en-US").format(number);
+}
+
+function formatDate(date, options = { month: "short", day: "numeric" }) {
+  return new Intl.DateTimeFormat("en-US", { timeZone: "UTC", ...options })
+    .format(new Date(`${date}T12:00:00Z`));
+}
+
+function getDays() {
+  return [...new Set(scores.map(({ date }) => date))].sort();
+}
+
+function getDayScores(date) {
+  return scores
+    .filter((entry) => entry.date === date)
+    .sort((a, b) => b.points - a.points || PLAYERS.findIndex(({ name }) => name === a.player) - PLAYERS.findIndex(({ name }) => name === b.player));
+}
+
+function rankFor(scoresForDay, index) {
+  if (index > 0 && scoresForDay[index].points === scoresForDay[index - 1].points) {
+    return rankFor(scoresForDay, index - 1);
+  }
+  return index + 1;
+}
+
+function getStandings() {
+  const totals = new Map(PLAYERS.map(({ name }) => [name, { name, total: 0, wins: 0, daysPlayed: 0 }]));
+  for (const date of getDays()) {
+    const dayScores = getDayScores(date);
+    if (dayScores.length) {
+      const topScore = dayScores[0].points;
+      for (const entry of dayScores) {
+        const total = totals.get(entry.player);
+        total.total += entry.points;
+        total.daysPlayed += 1;
+        if (entry.points === topScore) total.wins += 1;
+      }
+    }
+  }
+  return [...totals.values()].sort((a, b) => b.total - a.total || b.wins - a.wins || a.name.localeCompare(b.name));
+}
+
+function renderStandings(standings) {
+  const leader = standings[0]?.total || 0;
+  const rankAt = (index) => index > 0 && standings[index].total === standings[index - 1].total
+    ? rankAt(index - 1)
+    : index + 1;
+  elements.standingsBody.innerHTML = standings.map((player, index) => {
+    const info = playerInfo(player.name);
+    const rank = rankAt(index);
+    const gap = leader - player.total;
+    const progress = leader ? Math.round((player.total / leader) * 100) : 0;
+    return `<tr>
+      <td><span class="rank-number ${rank === 1 ? "first" : ""}">${String(rank).padStart(2, "0")}</span></td>
+      <td><span class="player-cell"><span class="player-avatar" style="background:${info.tint};color:${info.color}">${player.name[0]}</span>${player.name}${rank === 1 ? '<span class="champion-crown" aria-label="season leader">👑</span>' : ""}</span></td>
+      <td class="wins-cell"><strong>${player.wins}</strong> ${player.wins === 1 ? "win" : "wins"}</td>
+      <td class="points-cell">${formatNumber(player.total)}</td>
+      <td class="lead-cell"><span class="lead-track" aria-hidden="true"><span style="width:${progress}%"></span></span><span class="lead-value">${gap === 0 ? "—" : `−${formatNumber(gap)}`}</span></td>
+    </tr>`;
+  }).join("");
+}
+
+function renderChampion(standings) {
+  const leader = standings[0];
+  const second = standings[1];
+  if (!leader) {
+    elements.championName.textContent = "Nobody";
+    elements.championTotal.textContent = "0";
+    elements.championLead.textContent = "NO SCORES YET";
+    elements.championSubtitle.textContent = "The rivalry begins when the first scores arrive.";
+    return;
+  }
+  elements.championName.textContent = leader.name;
+  elements.championTotal.textContent = formatNumber(leader.total);
+  if (second && leader.total === second.total) {
+    elements.championLead.textContent = "ALL TIED UP";
+    elements.championSubtitle.textContent = `${leader.name} and ${second.name} are neck and neck.`;
+  } else {
+    const gap = leader.total - (second?.total || 0);
+    elements.championLead.textContent = second ? `+${formatNumber(gap)} AHEAD` : "OUT IN FRONT";
+    elements.championSubtitle.textContent = second
+      ? gap <= 10 ? `Just ${formatNumber(gap)} point${gap === 1 ? "" : "s"} ahead of ${second.name}. Anything can happen.`
+        : "A commanding lead. The rest of the crew is plotting a comeback."
+      : "The first score is on the board. Who's next?";
+  }
+
+  const topWins = [...standings].sort((a, b) => b.wins - a.wins || b.total - a.total)[0];
+  document.querySelector("#most-wins").innerHTML = `${topWins.name} <span>· ${topWins.wins} ${topWins.wins === 1 ? "win" : "wins"}</span>`;
+  const biggest = [...scores].sort((a, b) => b.points - a.points)[0];
+  document.querySelector("#biggest-score").innerHTML = biggest
+    ? `${biggest.player} <span>· ${formatNumber(biggest.points)} pts</span>`
+    : "— <span>· no scores yet</span>";
+  const squidParties = scores.filter(({ event }) => event === "squid").length;
+  document.querySelector("#squid-count").innerHTML = `${squidParties} <span>${squidParties === 1 ? "so far" : "so far"}</span>`;
+}
+
+function renderChart(days) {
+  const width = 500;
+  const height = 190;
+  const margin = { top: 10, right: 13, bottom: 28, left: 36 };
+  const plotWidth = width - margin.left - margin.right;
+  const plotHeight = height - margin.top - margin.bottom;
+  const x = (index) => margin.left + (days.length < 2 ? plotWidth / 2 : (index * plotWidth) / (days.length - 1));
+  const y = (rank) => margin.top + ((rank - 1) * plotHeight) / 4;
+  const daysScores = days.map((date) => getDayScores(date));
+  let svg = `<title id="chart-title">Daily player rankings</title><desc id="chart-desc">A line chart showing each player's daily rank across ${days.length} logged days. First place is at the top and fifth place at the bottom.</desc>`;
+  for (let rank = 1; rank <= 5; rank += 1) {
+    svg += `<line class="chart-grid" x1="${margin.left}" y1="${y(rank)}" x2="${width - margin.right}" y2="${y(rank)}"></line>`;
+    svg += `<text class="chart-y-label" x="0" y="${y(rank) + 3}">${rank}${rank === 1 ? "ST" : rank === 2 ? "ND" : rank === 3 ? "RD" : "TH"}</text>`;
+  }
+  days.forEach((date, index) => {
+    svg += `<text class="chart-x-label" x="${x(index)}" y="${height - 5}">${formatDate(date, { month: "short", day: "numeric" })}</text>`;
+  });
+
+  for (const player of PLAYERS) {
+    const points = [];
+    for (const [dayIndex, dayScores] of daysScores.entries()) {
+      const playerIndex = dayScores.findIndex(({ player: name }) => name === player.name);
+      if (playerIndex !== -1) points.push({ x: x(dayIndex), y: y(rankFor(dayScores, playerIndex)), date: days[dayIndex], score: dayScores[playerIndex].points });
+    }
+    if (!points.length) continue;
+    const hidden = visiblePlayers.has(player.name) ? "" : ' style="display:none"';
+    const path = points.map((point, index) => `${index ? "L" : "M"}${point.x},${point.y}`).join(" ");
+    svg += `<path class="chart-line" d="${path}" stroke="${player.color}"${hidden}></path>`;
+    svg += points.map((point) => `<circle class="chart-dot" cx="${point.x}" cy="${point.y}" r="3.5" fill="${player.color}"${hidden}><title>${player.name}: ${formatDate(point.date)}, ${formatNumber(point.score)} points</title></circle>`).join("");
+  }
+  elements.chart.setAttribute("viewBox", `0 0 ${width} ${height}`);
+  elements.chart.innerHTML = svg;
+  elements.legend.innerHTML = PLAYERS.map((player) => `
+    <button class="legend-button" type="button" data-player="${player.name}" aria-pressed="${visiblePlayers.has(player.name)}">
+      <span class="legend-swatch" style="background:${player.color}"></span>${player.name}
+    </button>`).join("");
+}
+
+function renderRounds(days) {
+  elements.roundSelector.innerHTML = days.slice().reverse().map((date) => `
+    <button class="round-button" type="button" data-date="${date}" aria-pressed="${date === selectedDate}">
+      ${formatDate(date)}<small>${getDayScores(date).length} scores</small>
+    </button>`).join("");
+  if (!selectedDate || !days.includes(selectedDate)) selectedDate = days[days.length - 1] || "";
+  elements.roundSelector.querySelectorAll(".round-button").forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.date === selectedDate));
+  });
+  renderRoundDetail(selectedDate);
+  celebrateRound(selectedDate);
+}
+
+function renderRoundDetail(date) {
+  const dayScores = getDayScores(date);
+  if (!date) {
+    elements.roundDetail.innerHTML = '<p class="round-empty">No rounds published yet. Check back for the first scores.</p>';
+    return;
+  }
+  const dateParts = date.split("-");
+  const events = dayScores.filter(({ event }) => event);
+  const eventLabel = (event) => event === "krillion" ? "🦐 KRILLION! MAX SCORE!" : "🦑 SQUID PARTY!";
+  const eventType = (event) => event === "squid" ? "squid" : "";
+  elements.roundDetail.innerHTML = `
+    <div class="round-summary">
+      <span class="round-date-mark">${dateParts[2]}</span>
+      <div><strong>${formatDate(date, { weekday: "long", month: "long", day: "numeric" })}</strong><small>${dayScores.length ? `${dayScores.length} ${dayScores.length === 1 ? "score" : "scores"} on the board` : "No scores logged for this day yet"}</small></div>
+      ${events.map(({ event, player }) => `<span class="round-event ${eventType(event)}">${eventLabel(event)} · ${player}</span>`).join("")}
+    </div>
+    <div class="round-results">${dayScores.map((entry, index) => `
+      <article class="round-result">
+        <div class="round-result-top"><span class="round-result-name">${entry.player}</span><span class="round-result-rank">${String(rankFor(dayScores, index)).padStart(2, "0")}</span></div>
+        <strong class="round-result-points">${formatNumber(entry.points)} <small>pts</small></strong>
+        ${entry.event ? `<div class="round-event-player ${eventType(entry.event)}">${eventLabel(entry.event)}</div>` : ""}
+      </article>`).join("")}</div>`;
+}
+
+function render() {
+  const days = getDays();
+  const standings = getStandings();
+  const latestDate = days[days.length - 1];
+  renderChampion(standings);
+  renderStandings(standings);
+  renderChart(days);
+  renderRounds(days);
+  elements.daysLogged.textContent = `${days.length} ${days.length === 1 ? "DAY" : "DAYS"} LOGGED`;
+  elements.roundCount.textContent = `${days.length} ${days.length === 1 ? "ROUND" : "ROUNDS"}`;
+  if (latestDate) {
+    const [year, month] = latestDate.split("-");
+    elements.seasonLabel.textContent = `${new Intl.DateTimeFormat("en-US", { month: "short", timeZone: "UTC" }).format(new Date(`${year}-${month}-01T12:00:00Z`)).toUpperCase()} '${year.slice(-2)}`;
+  }
+}
+
+elements.roundSelector.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-date]");
+  if (!button || button.dataset.date === selectedDate) return;
+  selectedDate = button.dataset.date;
+  renderRounds(getDays());
+});
+
+elements.legend.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-player]");
+  if (!button) return;
+  const player = button.dataset.player;
+  if (visiblePlayers.has(player)) visiblePlayers.delete(player);
+  else visiblePlayers.add(player);
+  renderChart(getDays());
+});
+
+if (typeof scores === "undefined" || !Array.isArray(scores) || !scores.every(isValidEntry)) {
+  const message = "The score ledger could not be loaded. Please contact the site owner.";
+  elements.roundDetail.textContent = message;
+  elements.roundDetail.setAttribute("role", "alert");
+  throw new Error(message);
+}
+
+render();

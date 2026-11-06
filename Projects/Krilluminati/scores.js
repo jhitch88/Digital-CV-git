@@ -1,0 +1,29 @@
+// Update this ledger and upload it with the site. Optional event: "krillion" or "squid".
+// Events celebrate on the latest round at page load and when opening an older round.
+const scores = [
+  { date: "2026-11-01", player: "Kasra", points: 130 },
+  { date: "2026-11-01", player: "Brady", points: 200 },
+  { date: "2026-11-01", player: "Steven", points: 440 },
+  { date: "2026-11-01", player: "Chris", points: 300 },
+  { date: "2026-11-01", player: "Jimmy", points: 415 },
+  { date: "2026-11-02", player: "Steven", points: 410 },
+  { date: "2026-11-02", player: "Brady", points: 300 },
+  { date: "2026-11-02", player: "Chris", points: 305 },
+  { date: "2026-11-02", player: "Kasra", points: 300 },
+  { date: "2026-11-02", player: "Jimmy", points: 375 },
+  { date: "2026-11-03", player: "Steven", points: 275 },
+  { date: "2026-11-03", player: "Brady", points: 335 },
+  { date: "2026-11-03", player: "Chris", points: 325 },
+  { date: "2026-11-03", player: "Kasra", points: 415 },
+  { date: "2026-11-03", player: "Jimmy", points: 410 },
+  { date: "2026-11-04", player: "Brady", points: 170 },
+  { date: "2026-11-04", player: "Kasra", points: 420 },
+  { date: "2026-11-04", player: "Jimmy", points: 255 },
+  { date: "2026-11-04", player: "Steven", points: 300 },
+  { date: "2026-11-04", player: "Chris", points: 250 },
+  { date: "2026-11-05", player: "Kasra", points: 360 },
+  { date: "2026-11-05", player: "Jimmy", points: 355 },
+  { date: "2026-11-05", player: "Chris", points: 335 },
+  { date: "2026-11-05", player: "Brady", points: 280 },
+  { date: "2026-11-05", player: "Steven", points: 395 }
+];

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f7f4ec">
+    <title>Krilluminati — The daily Krillion leaderboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="scores.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Krilluminati home">
+          <span class="brand-mark" aria-hidden="true">🦐</span>
+          <span>krilluminati<span class="brand-period">.</span></span>
+        </a>
+        <nav class="top-nav" aria-label="Main navigation">
+          <a class="active" href="#standings">The standings</a>
+          <a href="#race">The race</a>
+          <a href="#rounds">Daily rounds</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="intro">
+          <div class="intro-copy">
+            <p class="eyebrow"><span class="live-dot"></span> THE DAILY KRILLION LEDGER</p>
+            <h1>A little friendly<br>ocean <span>rivalry.</span></h1>
+            <p class="intro-description">Five friends. One daily puzzle. Bragging rights with a side of shrimp.</p>
+          </div>
+          <div class="season-stamp">
+            <span class="stamp-icon" aria-hidden="true">✳</span>
+            <span class="stamp-label">THE CURRENT<br>SEASON</span>
+            <strong id="season-label">NOV '26</strong>
+            <span class="stamp-days" id="days-logged">5 DAYS LOGGED</span>
+          </div>
+        </section>
+
+        <section class="champion-banner" aria-labelledby="champion-heading">
+          <div class="banner-grain" aria-hidden="true"></div>
+          <div class="champion-copy">
+            <p class="eyebrow light-eyebrow"><span aria-hidden="true">✦</span> CURRENTLY WEARING THE CROWN</p>
+            <h2 id="champion-heading">The tide is in <span id="champion-name">Steven</span>'s favor.</h2>
+            <p id="champion-subtitle">A commanding lead. The rest of the crew is plotting a comeback.</p>
+          </div>
+          <div class="champion-score">
+            <span class="score-label">TOTAL POINTS</span>
+            <strong id="champion-total">1,820</strong>
+            <span class="lead-pill" id="champion-lead">+10 AHEAD</span>
+          </div>
+          <div class="banner-shrimp" aria-hidden="true">🦐</div>
+        </section>
+
+        <section class="stats-row" aria-label="Season highlights">
+          <article class="stat-card">
+            <span class="stat-icon coral" aria-hidden="true">🏆</span>
+            <div><span class="stat-label">MOST DAILY WINS</span><strong id="most-wins">Steven <span>· 3 wins</span></strong></div>
+          </article>
+          <article class="stat-card">
+            <span class="stat-icon yellow" aria-hidden="true">⚡</span>
+            <div><span class="stat-label">BIGGEST SINGLE SCORE</span><strong id="biggest-score">Steven <span>· 440 pts</span></strong></div>
+          </article>
+          <article class="stat-card">
+            <span class="stat-icon mint" aria-hidden="true">🦑</span>
+            <div><span class="stat-label">SQUID PARTIES</span><strong id="squid-count">0 <span>so far</span></strong></div>
+          </article>
+        </section>
+
+        <div class="content-grid">
+          <section class="panel standings-panel" id="standings" aria-labelledby="standings-title">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">THE BIG BOARD</p>
+                <h2 id="standings-title">Season standings<span class="heading-dot">.</span></h2>
+              </div>
+              <span class="sort-note">TOTAL POINTS <span aria-hidden="true">↓</span></span>
+            </div>
+            <div class="standings-table-wrap">
+              <table class="standings-table">
+                <thead>
+                  <tr><th scope="col">RANK</th><th scope="col">PLAYER</th><th scope="col">DAILY WINS</th><th scope="col">TOTAL SCORE</th><th scope="col">TO THE LEAD</th></tr>
+                </thead>
+                <tbody id="standings-body"></tbody>
+              </table>
+            </div>
+            <p class="table-footnote"><span aria-hidden="true">↗</span> Higher score takes the crown. Ties share a place.</p>
+          </section>
+
+          <section class="panel race-panel" id="race" aria-labelledby="race-title">
+            <div class="panel-heading race-heading">
+              <div>
+                <p class="eyebrow">THE DAILY TIDE</p>
+                <h2 id="race-title">Place by place<span class="heading-dot">.</span></h2>
+              </div>
+              <span class="chart-mark" aria-hidden="true">↗</span>
+            </div>
+            <p class="chart-description">Each day's finish, from first to fifth. Lower on the chart is a higher place.</p>
+            <div class="chart-wrap" id="rank-chart-wrap">
+              <svg id="rank-chart" role="img" aria-labelledby="chart-title chart-desc"></svg>
+            </div>
+            <div class="chart-legend" id="chart-legend" aria-label="Toggle players on the chart"></div>
+          </section>
+
+          <section class="panel rounds-panel" id="rounds" aria-labelledby="rounds-title">
+            <div class="panel-heading rounds-heading">
+              <div>
+                <p class="eyebrow">THE DAILY DISH</p>
+                <h2 id="rounds-title">Round recaps<span class="heading-dot">.</span></h2>
+              </div>
+              <span class="round-count" id="round-count">5 ROUNDS</span>
+            </div>
+            <div class="round-selector" id="round-selector" role="group" aria-label="Choose a daily round"></div>
+            <div class="round-detail" id="round-detail" aria-live="polite"></div>
+          </section>
+        </div>
+
+      </main>
+
+      <footer class="footer">
+        <span><span aria-hidden="true">🦐</span> KEEP IT KRILLY.</span>
+        <span>Unofficial standings for a very official rivalry.</span>
+        <a href="https://krillion.io/" target="_blank" rel="noreferrer">PLAY TODAY'S PUZZLE <span aria-hidden="true">↗</span></a>
+      </footer>
+    </div>
+    <div class="celebration" id="celebration">
+      <div class="celebration-particles" id="celebration-particles" aria-hidden="true"></div>
+      <div class="celebration-announcements" id="celebration-announcements" role="status" aria-live="polite" aria-atomic="true"></div>
+    </div>
+  </body>
+</html>
