@@ -190,6 +190,11 @@ h1, h2, p { margin-top: 0; }
 .player-cell { display: flex; align-items: center; gap: 8px; font-weight: 700; }
 .player-avatar { width: 25px; height: 25px; display: grid; place-items: center; border-radius: 50%; font: 700 10px var(--display); }
 .champion-crown { font-size: 12px; margin-left: 1px; }
+.rank-movement { display: inline-flex; align-items: center; border-radius: 10px; padding: 3px 5px; font: 500 9px var(--mono); }
+.rank-movement.up { color: #236449; background: #d7eee1; }
+.rank-movement.down { color: #a63e2c; background: #fbe2d9; }
+.rank-movement.steady { color: var(--muted); background: #e4eff4; }
+.rank-movement.new { color: #75530d; background: #f7efcf; font-size: 8px; }
 .wins-cell { color: var(--muted); }
 .wins-cell strong { color: var(--ink); font-weight: 600; }
 .points-cell { font: 500 11px var(--mono); }

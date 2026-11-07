@@ -110,9 +110,9 @@ function rankFor(scoresForDay, index) {
   return index + 1;
 }
 
-function getStandings() {
+function getStandings(days = getDays()) {
   const totals = new Map(PLAYERS.map(({ name }) => [name, { name, total: 0, wins: 0, daysPlayed: 0 }]));
-  for (const date of getDays()) {
+  for (const date of days) {
     const dayScores = getDayScores(date);
     if (dayScores.length) {
       const topScore = dayScores[0].points;
@@ -127,19 +127,34 @@ function getStandings() {
   return [...totals.values()].sort((a, b) => b.total - a.total || b.wins - a.wins || a.name.localeCompare(b.name));
 }
 
-function renderStandings(standings) {
-  const leader = standings[0]?.total || 0;
-  const rankAt = (index) => index > 0 && standings[index].total === standings[index - 1].total
-    ? rankAt(index - 1)
+function standingRank(standings, index) {
+  return index > 0 && standings[index].total === standings[index - 1].total
+    ? standingRank(standings, index - 1)
     : index + 1;
+}
+
+function renderStandings(standings, previousStandings) {
+  const leader = standings[0]?.total || 0;
   elements.standingsBody.innerHTML = standings.map((player, index) => {
     const info = playerInfo(player.name);
-    const rank = rankAt(index);
+    const rank = standingRank(standings, index);
+    const previousIndex = previousStandings.findIndex((previous) => previous.name === player.name);
+    const previousPlayer = previousStandings[previousIndex];
+    let movement = "";
+    if (player.daysPlayed && previousPlayer?.daysPlayed) {
+      const change = standingRank(previousStandings, previousIndex) - rank;
+      const direction = change > 0 ? "up" : change < 0 ? "down" : "steady";
+      const label = change === 0 ? "No change since the previous round"
+        : `${change > 0 ? "Up" : "Down"} ${Math.abs(change)} ${Math.abs(change) === 1 ? "place" : "places"} since the previous round`;
+      movement = `<span class="rank-movement ${direction}" aria-label="${label}"><span aria-hidden="true">${change > 0 ? "▲" : change < 0 ? "▼" : "−"}${change ? Math.abs(change) : ""}</span></span>`;
+    } else if (player.daysPlayed) {
+      movement = '<span class="rank-movement new" aria-label="No previous standing">NEW</span>';
+    }
     const gap = leader - player.total;
     const progress = leader ? Math.round((player.total / leader) * 100) : 0;
     return `<tr>
       <td><span class="rank-number ${rank === 1 ? "first" : ""}">${String(rank).padStart(2, "0")}</span></td>
-      <td><span class="player-cell"><span class="player-avatar" style="background:${info.tint};color:${info.color}">${player.name[0]}</span>${player.name}${rank === 1 ? '<span class="champion-crown" aria-label="season leader">👑</span>' : ""}</span></td>
+      <td><span class="player-cell"><span class="player-avatar" style="background:${info.tint};color:${info.color}">${player.name[0]}</span>${player.name}${rank === 1 ? '<span class="champion-crown" aria-label="season leader">👑</span>' : ""}${movement}</span></td>
       <td class="wins-cell"><strong>${player.wins}</strong> ${player.wins === 1 ? "win" : "wins"}</td>
       <td class="points-cell">${formatNumber(player.total)}</td>
       <td class="lead-cell"><span class="lead-track" aria-hidden="true"><span style="width:${progress}%"></span></span><span class="lead-value">${gap === 0 ? "—" : `−${formatNumber(gap)}`}</span></td>
@@ -259,9 +274,10 @@ function renderRoundDetail(date) {
 function render() {
   const days = getDays();
   const standings = getStandings();
+  const previousStandings = getStandings(days.slice(0, -1));
   const latestDate = days[days.length - 1];
   renderChampion(standings);
-  renderStandings(standings);
+  renderStandings(standings, previousStandings);
   renderChart(days);
   renderRounds(days);
   elements.daysLogged.textContent = `${days.length} ${days.length === 1 ? "DAY" : "DAYS"} LOGGED`;

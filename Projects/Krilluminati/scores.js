@@ -25,5 +25,10 @@ const scores = [
   { date: "2026-11-05", player: "Jimmy", points: 355 },
   { date: "2026-11-05", player: "Chris", points: 335 },
   { date: "2026-11-05", player: "Brady", points: 280 },
-  { date: "2026-11-05", player: "Steven", points: 395 }
+  { date: "2026-11-05", player: "Steven", points: 395 },
+  { date: "2026-11-06", player: "Chris", points: 325 },
+  { date: "2026-11-06", player: "Jimmy", points: 215 },
+  { date: "2026-11-06", player: "Steven", points: 355 },
+  { date: "2026-11-06", player: "Kasra", points: 410 },
+  { date: "2026-11-06", player: "Brady", points: 385 }
 ];
