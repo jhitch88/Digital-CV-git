@@ -161,6 +161,7 @@ h1, h2, p { margin-top: 0; }
 .stat-icon.yellow { background: #f9f0cf; }
 .stat-icon.mint { background: #e1eee0; }
 .stat-label { display: block; color: var(--muted); font: 8px var(--mono); letter-spacing: .8px; margin-bottom: 5px; }
+.stat-note { display: block; color: var(--muted); font-size: 9px; margin-bottom: 4px; }
 .stat-card strong { display: block; font: 700 12px var(--display); }
 .stat-card strong span { color: var(--muted); font: 500 10px var(--sans); }
 
