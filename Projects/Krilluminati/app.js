@@ -172,7 +172,7 @@ function renderStandings(standings, previousStandings) {
   }).join("");
 }
 
-function renderChampion(standings) {
+function renderChampion(standings, previousStandings, championChangedToday) {
   const leader = standings[0];
   const second = standings[1];
   if (!leader) {
@@ -184,7 +184,14 @@ function renderChampion(standings) {
   }
   elements.championName.textContent = leader.name;
   elements.championTotal.textContent = formatNumber(leader.total);
-  if (second && leader.total === second.total) {
+  const newlyCrowned = championChangedToday
+    && previousStandings[0]
+    && leader.name !== previousStandings[0].name
+    && (!second || leader.total > second.total);
+  if (newlyCrowned) {
+    elements.championLead.textContent = second ? `+${formatNumber(leader.total - second.total)} AHEAD` : "OUT IN FRONT";
+    elements.championSubtitle.textContent = `${leader.name} takes the crown today. Who's coming for it?`;
+  } else if (second && leader.total === second.total) {
     elements.championLead.textContent = "ALL TIED UP";
     elements.championSubtitle.textContent = `${leader.name} and ${second.name} are neck and neck.`;
   } else {
@@ -291,7 +298,7 @@ function render() {
   const standings = getStandings();
   const previousStandings = getStandings(finalDays.slice(0, -1));
   const latestDate = days[days.length - 1];
-  renderChampion(standings);
+  renderChampion(standings, previousStandings, latestDate === finalDays[finalDays.length - 1]);
   renderStandings(standings, previousStandings);
   renderChart(days);
   renderRounds(days);

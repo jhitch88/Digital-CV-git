@@ -78,6 +78,25 @@ test("first round marks players as new rather than inventing previous ranks", ()
   assert.doesNotMatch(playerRow(html, "Kasra"), /rank-movement/);
 });
 
+test("a new sole leader gets a crown-change subtitle on the latest finalized round", () => {
+  const { nodes } = renderPage(`const scores = [
+    { date: "2026-11-01", player: "Steven", points: 100 },
+    { date: "2026-11-02", player: "Kasra", points: 150 }
+  ];`);
+  assert.equal(nodes.get("#champion-name").textContent, "Kasra");
+  assert.equal(nodes.get("#champion-subtitle").textContent, "Kasra takes the crown today. Who's coming for it?");
+});
+
+test("provisional rounds do not trigger a new-champion subtitle", () => {
+  const { nodes } = renderPage(`const scores = [
+    { date: "2026-11-01", player: "Steven", points: 100 },
+    { date: "2026-11-02", player: "Kasra", points: 150 },
+    { date: "2026-11-03", player: "Steven", points: 0, pending: true }
+  ];`);
+  assert.equal(nodes.get("#champion-name").textContent, "Kasra");
+  assert.notEqual(nodes.get("#champion-subtitle").textContent, "Kasra takes the crown today. Who's coming for it?");
+});
+
 const partialLedger = `const scores = [
   { date: "2026-11-08", player: "Brady", points: 100 },
   { date: "2026-11-08", player: "Jimmy", points: 200 },
@@ -143,7 +162,7 @@ test("invalid pending markers cannot masquerade as confirmed scores", () => {
   }
 });
 
-test("published November 9 ledger contains three submissions and two pending zeros", () => {
+test("published November 9 ledger counts Chris and Steven's confirmed zero scores", () => {
   const ledger = fs.readFileSync(path.join(projectDir, "scores.js"), "utf8");
   const context = vm.createContext({});
   vm.runInContext(ledger, context);
@@ -154,7 +173,22 @@ test("published November 9 ledger contains three submissions and two pending zer
     { date: "2026-11-09", player: "Brady", points: 360 },
     { date: "2026-11-09", player: "Jimmy", points: 295 },
     { date: "2026-11-09", player: "Kasra", points: 390 },
-    { date: "2026-11-09", player: "Chris", points: 0, pending: true },
-    { date: "2026-11-09", player: "Steven", points: 0, pending: true }
+    { date: "2026-11-09", player: "Chris", points: 0 },
+    { date: "2026-11-09", player: "Steven", points: 0 }
   ]);
+
+  const { nodes, context: pageContext } = renderPage(ledger);
+  const detail = nodes.get("#round-detail").innerHTML;
+  assert.doesNotMatch(detail, /Provisional|pending/);
+  for (const player of ["Chris", "Steven"]) {
+    const card = detail.split("</article>").find((entry) => entry.includes(`>${player}</span>`));
+    assert.match(card, /class="round-result-rank">04<\/span>/);
+    assert.match(card, /0 <small>pts<\/small>/);
+  }
+  for (const player of ["Chris", "Steven"]) {
+    assert.equal(
+      vm.runInContext(`getStandings().find(({ name }) => name === "${player}").daysPlayed`, pageContext),
+      9
+    );
+  }
 });

@@ -46,6 +46,6 @@ const scores = [
   { date: "2026-11-09", player: "Brady", points: 360 },
   { date: "2026-11-09", player: "Jimmy", points: 295 },
   { date: "2026-11-09", player: "Kasra", points: 390 },
-  { date: "2026-11-09", player: "Chris", points: 0, pending: true },
-  { date: "2026-11-09", player: "Steven", points: 0, pending: true }
+  { date: "2026-11-09", player: "Chris", points: 0 },
+  { date: "2026-11-09", player: "Steven", points: 0 }
 ];
