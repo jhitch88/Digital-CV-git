@@ -40,7 +40,7 @@ function celebrateRound(date) {
     const title = document.createElement("strong");
     title.textContent = event === "squid" ? "🦑 SQUID PARTY!" : "🦐 ONE IN A KRILLION!";
     const detail = document.createElement("span");
-    detail.textContent = `${player} · ${formatDate(date)} · ${event === "squid" ? "All squids. All legend." : "A Krillion pick. Legendary catch!"}`;
+    detail.textContent = `${player} · ${formatDate(date)} · ${event === "squid" ? "A quorum of squids. Let the party begin!" : "A Krillion pick. Legendary catch!"}`;
     announcement.append(title, detail);
     elements.celebrationAnnouncements.append(announcement);
   }
@@ -77,6 +77,8 @@ function isValidEntry(entry) {
     && PLAYERS.some(({ name }) => name === entry.player)
     && Number.isInteger(entry.points)
     && entry.points >= 0
+    && (entry.pending === undefined || typeof entry.pending === "boolean")
+    && (!entry.pending || (entry.points === 0 && !entry.event))
     && ["", "krillion", "squid"].includes(entry.event || "");
 }
 
@@ -103,6 +105,14 @@ function getDayScores(date) {
     .sort((a, b) => b.points - a.points || PLAYERS.findIndex(({ name }) => name === a.player) - PLAYERS.findIndex(({ name }) => name === b.player));
 }
 
+function isProvisional(date) {
+  return getDayScores(date).some(({ pending }) => pending);
+}
+
+function getFinalDays(days = getDays()) {
+  return days.filter((date) => !isProvisional(date));
+}
+
 function rankFor(scoresForDay, index) {
   if (index > 0 && scoresForDay[index].points === scoresForDay[index - 1].points) {
     return rankFor(scoresForDay, index - 1);
@@ -112,7 +122,7 @@ function rankFor(scoresForDay, index) {
 
 function getStandings(days = getDays()) {
   const totals = new Map(PLAYERS.map(({ name }) => [name, { name, total: 0, wins: 0, daysPlayed: 0 }]));
-  for (const date of days) {
+  for (const date of getFinalDays(days)) {
     const dayScores = getDayScores(date);
     if (dayScores.length) {
       const topScore = dayScores[0].points;
@@ -188,15 +198,17 @@ function renderChampion(standings) {
 
   const topWins = [...standings].sort((a, b) => b.wins - a.wins || b.total - a.total)[0];
   document.querySelector("#most-wins").innerHTML = `${topWins.name} <span>· ${topWins.wins} ${topWins.wins === 1 ? "win" : "wins"}</span>`;
-  const biggest = [...scores].sort((a, b) => b.points - a.points)[0];
+  const finalScores = scores.filter(({ date }) => !isProvisional(date));
+  const biggest = [...finalScores].sort((a, b) => b.points - a.points)[0];
   document.querySelector("#biggest-score").innerHTML = biggest
     ? `${biggest.player} <span>· ${formatNumber(biggest.points)} pts</span>`
     : "— <span>· no scores yet</span>";
-  const squidParties = scores.filter(({ event }) => event === "squid").length;
+  const squidParties = finalScores.filter(({ event }) => event === "squid").length;
   document.querySelector("#squid-count").innerHTML = `${squidParties} <span>${squidParties === 1 ? "so far" : "so far"}</span>`;
 }
 
 function renderChart(days) {
+  days = getFinalDays(days);
   const width = 500;
   const height = 190;
   const margin = { top: 10, right: 13, bottom: 28, left: 36 };
@@ -237,7 +249,7 @@ function renderChart(days) {
 function renderRounds(days) {
   elements.roundSelector.innerHTML = days.slice().reverse().map((date) => `
     <button class="round-button" type="button" data-date="${date}" aria-pressed="${date === selectedDate}">
-      ${formatDate(date)}<small>${getDayScores(date).length} scores</small>
+      ${formatDate(date)}<small>${isProvisional(date) ? "Provisional" : `${getDayScores(date).length} scores`}</small>
     </button>`).join("");
   if (!selectedDate || !days.includes(selectedDate)) selectedDate = days[days.length - 1] || "";
   elements.roundSelector.querySelectorAll(".round-button").forEach((button) => {
@@ -254,27 +266,30 @@ function renderRoundDetail(date) {
     return;
   }
   const dateParts = date.split("-");
+  const provisional = isProvisional(date);
+  const submittedCount = dayScores.filter(({ pending }) => !pending).length;
   const events = dayScores.filter(({ event }) => event);
   const eventLabel = (event) => event === "krillion" ? "🦐 KRILLION! MAX SCORE!" : "🦑 SQUID PARTY!";
   const eventType = (event) => event === "squid" ? "squid" : "";
   elements.roundDetail.innerHTML = `
     <div class="round-summary">
       <span class="round-date-mark">${dateParts[2]}</span>
-      <div><strong>${formatDate(date, { weekday: "long", month: "long", day: "numeric" })}</strong><small>${dayScores.length ? `${dayScores.length} ${dayScores.length === 1 ? "score" : "scores"} on the board` : "No scores logged for this day yet"}</small></div>
+      <div><strong>${formatDate(date, { weekday: "long", month: "long", day: "numeric" })}</strong><small>${provisional ? `Provisional: ${submittedCount} of ${PLAYERS.length} submitted. Not counted in standings, wins or the chart yet.` : dayScores.length ? `${dayScores.length} ${dayScores.length === 1 ? "score" : "scores"} on the board` : "No scores logged for this day yet"}</small></div>
       ${events.map(({ event, player }) => `<span class="round-event ${eventType(event)}">${eventLabel(event)} · ${player}</span>`).join("")}
     </div>
     <div class="round-results">${dayScores.map((entry, index) => `
       <article class="round-result">
-        <div class="round-result-top"><span class="round-result-name">${entry.player}</span><span class="round-result-rank">${String(rankFor(dayScores, index)).padStart(2, "0")}</span></div>
-        <strong class="round-result-points">${formatNumber(entry.points)} <small>pts</small></strong>
+        <div class="round-result-top"><span class="round-result-name">${entry.player}</span><span class="round-result-rank">${entry.pending ? "" : String(rankFor(dayScores, index)).padStart(2, "0")}</span></div>
+        <strong class="round-result-points">${formatNumber(entry.points)} <small>${entry.pending ? "pts (pending)" : "pts"}</small></strong>
         ${entry.event ? `<div class="round-event-player ${eventType(entry.event)}">${eventLabel(entry.event)}</div>` : ""}
       </article>`).join("")}</div>`;
 }
 
 function render() {
   const days = getDays();
+  const finalDays = getFinalDays(days);
   const standings = getStandings();
-  const previousStandings = getStandings(days.slice(0, -1));
+  const previousStandings = getStandings(finalDays.slice(0, -1));
   const latestDate = days[days.length - 1];
   renderChampion(standings);
   renderStandings(standings, previousStandings);

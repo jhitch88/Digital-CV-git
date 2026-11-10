@@ -1,5 +1,7 @@
 // Update this ledger and upload it with the site. Optional event: "krillion" or "squid".
 // Events celebrate on the latest round at page load and when opening an older round.
+// Use points: 0, pending: true for missing submissions; the whole round stays provisional.
+// Replace pending scores and remove pending when submitted. At close, remove pending to confirm a zero.
 const scores = [
   { date: "2026-11-01", player: "Kasra", points: 130 },
   { date: "2026-11-01", player: "Brady", points: 200 },
@@ -35,5 +37,15 @@ const scores = [
   { date: "2026-11-07", player: "Steven", points: 305 },
   { date: "2026-11-07", player: "Kasra", points: 275 },
   { date: "2026-11-07", player: "Jimmy", points: 160 },
-  { date: "2026-11-07", player: "Chris", points: 420 }
+  { date: "2026-11-07", player: "Chris", points: 420 },
+  { date: "2026-11-08", player: "Steven", points: 240 },
+  { date: "2026-11-08", player: "Kasra", points: 365 },
+  { date: "2026-11-08", player: "Brady", points: 280 },
+  { date: "2026-11-08", player: "Chris", points: 310 },
+  { date: "2026-11-08", player: "Jimmy", points: 360, event: "squid" },
+  { date: "2026-11-09", player: "Brady", points: 360 },
+  { date: "2026-11-09", player: "Jimmy", points: 295 },
+  { date: "2026-11-09", player: "Kasra", points: 390 },
+  { date: "2026-11-09", player: "Chris", points: 0, pending: true },
+  { date: "2026-11-09", player: "Steven", points: 0, pending: true }
 ];
