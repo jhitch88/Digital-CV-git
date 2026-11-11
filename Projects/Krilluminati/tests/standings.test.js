@@ -7,26 +7,45 @@ const vm = require("node:vm");
 const projectDir = path.resolve(__dirname, "..");
 const app = fs.readFileSync(path.join(projectDir, "app.js"), "utf8");
 
-function renderPage(ledger) {
+function renderPage(ledger, { reducedMotion = false } = {}) {
   const nodes = new Map();
+  const timers = new Map();
+  let nextTimer = 0;
+  function makeNode() {
+    return {
+      innerHTML: "",
+      textContent: "",
+      children: [],
+      style: { setProperty() {} },
+      setAttribute() {},
+      addEventListener() {},
+      append(...children) { this.children.push(...children); },
+      replaceChildren(...children) { this.children = children; },
+      querySelectorAll() { return []; }
+    };
+  }
   const document = {
+    createElement() { return makeNode(); },
     querySelector(selector) {
       if (!nodes.has(selector)) {
-        nodes.set(selector, {
-          innerHTML: "",
-          textContent: "",
-          setAttribute() {},
-          addEventListener() {},
-          replaceChildren() {},
-          querySelectorAll() { return []; }
-        });
+        nodes.set(selector, makeNode());
       }
       return nodes.get(selector);
     }
   };
-  const context = vm.createContext({ document, window: {}, Intl, setTimeout, clearTimeout });
+  const context = vm.createContext({
+    document,
+    window: { matchMedia: () => ({ matches: reducedMotion }) },
+    Intl,
+    setTimeout(callback, delay) {
+      const id = ++nextTimer;
+      timers.set(id, { callback: () => { timers.delete(id); callback(); }, delay });
+      return id;
+    },
+    clearTimeout(id) { timers.delete(id); }
+  });
   vm.runInContext(`${ledger}\n${app}`, context);
-  return { nodes, context };
+  return { nodes, context, timers };
 }
 
 function renderLedger(ledger) {
@@ -38,6 +57,44 @@ function playerRow(html, player) {
   assert.ok(row, `Missing standings row for ${player}`);
   return row;
 }
+
+test("Krillion celebration showcases the golden shrimp and cleans up", () => {
+  const { nodes, context, timers } = renderPage(`const scores = [
+    { date: "2026-11-01", player: "Jimmy", points: 400, event: "krillion" }
+  ];`);
+  const particles = nodes.get("#celebration-particles");
+  const announcements = nodes.get("#celebration-announcements");
+  assert.equal(particles.children.length, 1);
+  assert.equal(particles.children[0].className, "krillion-shrine");
+  assert.match(particles.children[0].innerHTML, /src="images\/goldkrill\.png" alt=""/);
+  assert.ok(fs.existsSync(path.join(projectDir, "images", "goldkrill.png")));
+  assert.match(announcements.children[0].children[0].textContent, /ONE IN A KRILLION/);
+  assert.match(announcements.children[0].children[1].textContent, /Jimmy · Nov 1/);
+  const timer = [...timers.values()][0];
+  assert.equal(timer.delay, 4500);
+  timer.callback();
+  assert.equal(particles.children.length, 0);
+  assert.equal(announcements.children.length, 0);
+  vm.runInContext('celebrateRound("2026-11-01"); celebrateRound("2026-11-02")', context);
+  assert.equal(particles.children.length, 0);
+  assert.equal(announcements.children.length, 0);
+  assert.equal(timers.size, 0);
+});
+
+test("mixed celebrations retain squid particles and one shrine, with a still shrine for reduced motion", () => {
+  const ledger = `const scores = [
+    { date: "2026-11-01", player: "Jimmy", points: 400, event: "krillion" },
+    { date: "2026-11-01", player: "Steven", points: 390, event: "krillion" },
+    { date: "2026-11-01", player: "Chris", points: 300, event: "squid" }
+  ];`;
+  for (const reducedMotion of [false, true]) {
+    const { nodes } = renderPage(ledger, { reducedMotion });
+    const particles = nodes.get("#celebration-particles").children;
+    assert.equal(particles.filter((node) => node.className === "krillion-shrine").length, 1);
+    assert.equal(particles.filter((node) => node.className === "celebration-particle squid").length, reducedMotion ? 0 : 28);
+    assert.equal(nodes.get("#celebration-announcements").children.length, 3);
+  }
+});
 
 test("latest round shows season rank movement from the prior round", () => {
   const html = renderLedger(`const scores = [
@@ -178,6 +235,7 @@ test("published November 9 ledger counts Chris and Steven's confirmed zero score
   ]);
 
   const { nodes, context: pageContext } = renderPage(ledger);
+  vm.runInContext('renderRoundDetail("2026-11-09")', pageContext);
   const detail = nodes.get("#round-detail").innerHTML;
   assert.doesNotMatch(detail, /Provisional|pending/);
   for (const player of ["Chris", "Steven"]) {
@@ -187,7 +245,7 @@ test("published November 9 ledger counts Chris and Steven's confirmed zero score
   }
   for (const player of ["Chris", "Steven"]) {
     assert.equal(
-      vm.runInContext(`getStandings().find(({ name }) => name === "${player}").daysPlayed`, pageContext),
+      vm.runInContext(`getStandings(getDays().filter((date) => date <= "2026-11-09")).find(({ name }) => name === "${player}").daysPlayed`, pageContext),
       9
     );
   }

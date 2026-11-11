@@ -45,18 +45,29 @@ function celebrateRound(date) {
     elements.celebrationAnnouncements.append(announcement);
   }
 
-  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    const eventTypes = [...new Set(achievements.map(({ event }) => event))];
+  if (achievements.some(({ event }) => event === "krillion")) {
+    const shrine = document.createElement("div");
+    shrine.className = "krillion-shrine";
+    shrine.innerHTML = `
+      <div class="krillion-rays"></div>
+      <div class="krillion-halo"></div>
+      <span class="krillion-sparkle">✦</span><span class="krillion-sparkle">✧</span>
+      <span class="krillion-sparkle">✦</span><span class="krillion-sparkle">✧</span>
+      <span class="krillion-sparkle">✦</span><span class="krillion-sparkle">✧</span>
+      <img class="krillion-shrimp" src="images/goldkrill.png" alt="">
+    `;
+    elements.celebrationParticles.append(shrine);
+  }
+
+  if (achievements.some(({ event }) => event === "squid")
+      && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     for (let index = 0; index < 28; index += 1) {
-      const event = eventTypes[index % eventTypes.length];
       const particle = document.createElement("span");
-      particle.className = `celebration-particle ${event}`;
-      if (event === "squid") particle.textContent = "🦑";
+      particle.className = "celebration-particle squid";
+      particle.textContent = "🦑";
       particle.style.setProperty("--left", `${3 + Math.random() * 94}%`);
       particle.style.setProperty("--delay", `${Math.random() * .7}s`);
       particle.style.setProperty("--drift", `${Math.random() * 100 - 50}px`);
-      particle.style.setProperty("--spin", `${Math.random() * 540 - 270}deg`);
-      particle.style.setProperty("--confetti-color", index % 2 ? "var(--orange)" : "var(--yellow)");
       elements.celebrationParticles.append(particle);
     }
   }

@@ -282,7 +282,50 @@ h1, h2, p { margin-top: 0; }
   animation-fill-mode: both;
 }
 .celebration-particle.squid { bottom: -40px; font-size: 27px; animation-name: squid-rise; }
-.celebration-particle.krillion { top: -20px; width: 9px; height: 15px; border-radius: 2px; background: var(--confetti-color); animation-name: confetti-fall; }
+.krillion-shrine {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  width: min(72vw, 330px, 55vh);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  animation: shrine-entrance 4.5s ease-in-out both;
+}
+.krillion-rays, .krillion-halo { position: absolute; inset: -18%; border-radius: 50%; }
+.krillion-rays {
+  background: repeating-conic-gradient(from 0deg, #ffe69788 0deg 8deg, transparent 8deg 25deg);
+  mask-image: radial-gradient(circle, #000 20%, transparent 70%);
+  animation: rays-turn 12s linear infinite;
+}
+.krillion-halo {
+  inset: 4%;
+  background: radial-gradient(circle, #fff8cc 5%, #ffd35a99 45%, transparent 72%);
+  filter: blur(7px);
+  animation: halo-pulse 1.8s ease-in-out infinite alternate;
+}
+.krillion-shrimp {
+  position: absolute;
+  inset: 8%;
+  width: 84%;
+  height: 84%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 12px #9d5a1970);
+  animation: shrimp-float 2s ease-in-out infinite alternate;
+}
+.krillion-sparkle {
+  position: absolute;
+  z-index: 1;
+  color: #fff7c0;
+  text-shadow: 0 0 10px #e6a921, 0 0 20px #ffc93d;
+  font-size: clamp(20px, 5vw, 38px);
+  animation: sparkle-twinkle 1s ease-in-out infinite alternate;
+}
+.krillion-sparkle:nth-of-type(1) { top: 5%; left: 14%; }
+.krillion-sparkle:nth-of-type(2) { top: 12%; right: 8%; animation-delay: -.4s; }
+.krillion-sparkle:nth-of-type(3) { top: 43%; left: -6%; animation-delay: -.8s; }
+.krillion-sparkle:nth-of-type(4) { top: 48%; right: -7%; animation-delay: -.2s; }
+.krillion-sparkle:nth-of-type(5) { bottom: 5%; left: 12%; animation-delay: -.6s; }
+.krillion-sparkle:nth-of-type(6) { bottom: 3%; right: 12%; animation-delay: -.3s; }
 
 @keyframes celebration-arrive {
   from { opacity: 0; transform: translateY(12px); }
@@ -294,12 +337,16 @@ h1, h2, p { margin-top: 0; }
   80% { opacity: .8; }
   100% { opacity: 0; transform: translate(var(--drift), calc(-100vh - 60px)) rotate(25deg); }
 }
-@keyframes confetti-fall {
-  0% { opacity: 0; transform: translate(0, 0) rotate(0); }
-  10% { opacity: 1; }
-  80% { opacity: .9; }
-  100% { opacity: 0; transform: translate(var(--drift), calc(100vh + 40px)) rotate(var(--spin)); }
+@keyframes shrine-entrance {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.3) rotate(-18deg); }
+  14% { opacity: 1; transform: translate(-50%, -50%) scale(1.08) rotate(4deg); }
+  24%, 82% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0); }
+  100% { opacity: 0; transform: translate(-50%, -55%) scale(.9); }
 }
+@keyframes rays-turn { to { transform: rotate(360deg); } }
+@keyframes halo-pulse { from { transform: scale(.9); opacity: .7; } to { transform: scale(1.1); opacity: 1; } }
+@keyframes shrimp-float { from { transform: translateY(5px) rotate(-4deg); } to { transform: translateY(-8px) rotate(4deg); } }
+@keyframes sparkle-twinkle { from { opacity: .4; transform: scale(.65) rotate(-20deg); } to { opacity: 1; transform: scale(1.2) rotate(20deg); } }
 
 .footer {
   min-height: 74px;
@@ -369,6 +416,7 @@ h1, h2, p { margin-top: 0; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
-  .celebration-particles { display: none; }
+  .celebration-particle { display: none; }
   .celebration-card { animation: none; }
+  .krillion-shrine, .krillion-rays, .krillion-halo, .krillion-shrimp, .krillion-sparkle { animation: none; }
 }
