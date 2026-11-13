@@ -19,11 +19,22 @@ const elements = {
   seasonLabel: document.querySelector("#season-label"),
   daysLogged: document.querySelector("#days-logged"),
   roundCount: document.querySelector("#round-count"),
+  seasonSelect: document.querySelector("#season-select"),
+  seasonStampLabel: document.querySelector("#season-stamp-label"),
+  seasonDescription: document.querySelector("#season-description"),
+  crownLabel: document.querySelector("#crown-label"),
+  chartView: document.querySelector("#chart-view"),
+  chartRange: document.querySelector("#chart-range"),
+  chartRangeLabel: document.querySelector("#chart-range-label"),
+  chartDescription: document.querySelector("#chart-description"),
   celebrationParticles: document.querySelector("#celebration-particles"),
   celebrationAnnouncements: document.querySelector("#celebration-announcements")
 };
 
 let selectedDate = "";
+let selectedMonth = "";
+let chartView = "daily";
+let chartRange = 0;
 let visiblePlayers = new Set(PLAYERS.map(({ name }) => name));
 let celebrationTimeout;
 
@@ -110,6 +121,42 @@ function getDays() {
   return [...new Set(scores.map(({ date }) => date))].sort();
 }
 
+function getSeasonDays() {
+  return getDays().filter((date) => date.slice(0, 7) === selectedMonth);
+}
+
+function dateRangeLabel(days) {
+  const first = days[0];
+  const last = days[days.length - 1];
+  return first === last ? formatDate(first)
+    : `${formatDate(first)}–${formatDate(last, { day: "numeric" })}`;
+}
+
+function getDailyRanges(days) {
+  const ranges = [];
+  for (let end = days.length; end > 0; end -= 7) {
+    ranges.push(days.slice(Math.max(0, end - 7), end));
+  }
+  return ranges;
+}
+
+function getWeeklyPeriods(days) {
+  const weeks = new Map();
+  for (const date of days) {
+    const monday = new Date(`${date}T12:00:00Z`);
+    monday.setUTCDate(monday.getUTCDate() - (monday.getUTCDay() + 6) % 7);
+    const key = monday.toISOString().slice(0, 10);
+    if (!weeks.has(key)) weeks.set(key, []);
+    weeks.get(key).push(date);
+  }
+  return [...weeks.values()].map((weekDays) => ({
+    days: weekDays,
+    label: dateRangeLabel(weekDays),
+    scores: getStandings(weekDays).filter(({ daysPlayed }) => daysPlayed)
+      .map(({ name, total }) => ({ player: name, points: total }))
+  }));
+}
+
 function getDayScores(date) {
   return scores
     .filter((entry) => entry.date === date)
@@ -174,8 +221,8 @@ function renderStandings(standings, previousStandings) {
     const gap = leader - player.total;
     const progress = leader ? Math.round((player.total / leader) * 100) : 0;
     return `<tr>
-      <td><span class="rank-number ${rank === 1 ? "first" : ""}">${String(rank).padStart(2, "0")}</span></td>
-      <td><span class="player-cell"><span class="player-avatar" style="background:${info.tint};color:${info.color}">${player.name[0]}</span>${player.name}${rank === 1 ? '<span class="champion-crown" aria-label="season leader">👑</span>' : ""}${movement}</span></td>
+      <td><span class="rank-number ${rank === 1 && player.daysPlayed ? "first" : ""}">${player.daysPlayed ? String(rank).padStart(2, "0") : "—"}</span></td>
+      <td><span class="player-cell"><span class="player-avatar" style="background:${info.tint};color:${info.color}">${player.name[0]}</span>${player.name}${rank === 1 && player.daysPlayed ? '<span class="champion-crown" aria-label="season leader">👑</span>' : ""}${movement}</span></td>
       <td class="wins-cell"><strong>${player.wins}</strong> ${player.wins === 1 ? "win" : "wins"}</td>
       <td class="points-cell">${formatNumber(player.total)}</td>
       <td class="lead-cell"><span class="lead-track" aria-hidden="true"><span style="width:${progress}%"></span></span><span class="lead-value">${gap === 0 ? "—" : `−${formatNumber(gap)}`}</span></td>
@@ -183,14 +230,17 @@ function renderStandings(standings, previousStandings) {
   }).join("");
 }
 
-function renderChampion(standings, previousStandings, championChangedToday) {
+function renderChampion(standings, previousStandings, championChangedToday, days = getSeasonDays()) {
   const leader = standings[0];
   const second = standings[1];
-  if (!leader) {
+  if (!leader || !getFinalDays(days).length) {
     elements.championName.textContent = "Nobody";
     elements.championTotal.textContent = "0";
     elements.championLead.textContent = "NO SCORES YET";
     elements.championSubtitle.textContent = "The rivalry begins when the first scores arrive.";
+    document.querySelector("#most-wins").innerHTML = "— <span>· no wins yet</span>";
+    document.querySelector("#biggest-score").innerHTML = "— <span>· no scores yet</span>";
+    document.querySelector("#squid-count").innerHTML = "0 <span>so far</span>";
     return;
   }
   elements.championName.textContent = leader.name;
@@ -216,7 +266,8 @@ function renderChampion(standings, previousStandings, championChangedToday) {
 
   const topWins = [...standings].sort((a, b) => b.wins - a.wins || b.total - a.total)[0];
   document.querySelector("#most-wins").innerHTML = `${topWins.name} <span>· ${topWins.wins} ${topWins.wins === 1 ? "win" : "wins"}</span>`;
-  const finalScores = scores.filter(({ date }) => !isProvisional(date));
+  const finalDays = new Set(getFinalDays(days));
+  const finalScores = scores.filter(({ date }) => finalDays.has(date));
   const biggest = [...finalScores].sort((a, b) => b.points - a.points)[0];
   document.querySelector("#biggest-score").innerHTML = biggest
     ? `${biggest.player} <span>· ${formatNumber(biggest.points)} pts</span>`
@@ -227,34 +278,52 @@ function renderChampion(standings, previousStandings, championChangedToday) {
 
 function renderChart(days) {
   days = getFinalDays(days);
+  const ranges = getDailyRanges(days);
+  if (chartRange >= ranges.length) chartRange = 0;
+  elements.chartView.value = chartView;
+  elements.chartRange.hidden = chartView === "weekly";
+  elements.chartRangeLabel.hidden = chartView === "weekly";
+  elements.chartRange.disabled = !ranges.length;
+  elements.chartRange.innerHTML = ranges.map((range, index) =>
+    `<option value="${index}">${index === 0 ? "Latest: " : ""}${dateRangeLabel(range)}</option>`
+  ).join("");
+  elements.chartRange.value = String(chartRange);
+  const periods = chartView === "weekly" ? getWeeklyPeriods(days)
+    : (ranges[chartRange] || []).map((date) => ({ days: [date], label: formatDate(date), scores: getDayScores(date) }));
+  elements.chartDescription.textContent = !periods.length
+    ? "No finalized rounds in this month yet. Provisional rounds stay off the chart."
+    : chartView === "weekly"
+      ? "Rank by total points each Monday–Sunday week, within this month. Weeks may be partial. First place is at the top; provisional rounds are excluded."
+      : `${chartRange === 0 ? "Latest" : "Earlier"} ${periods.length} finalized ${periods.length === 1 ? "round" : "rounds"}: ${dateRangeLabel(periods.flatMap(({ days }) => days))}. First place is at the top; provisional rounds are excluded. Choose a range for older rounds; toggle players below.`;
   const width = 500;
   const height = 190;
   const margin = { top: 10, right: 13, bottom: 28, left: 36 };
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
-  const x = (index) => margin.left + (days.length < 2 ? plotWidth / 2 : (index * plotWidth) / (days.length - 1));
+  const x = (index) => margin.left + (periods.length < 2 ? plotWidth / 2 : (index * plotWidth) / (periods.length - 1));
   const y = (rank) => margin.top + ((rank - 1) * plotHeight) / 4;
-  const daysScores = days.map((date) => getDayScores(date));
-  let svg = `<title id="chart-title">Daily player rankings</title><desc id="chart-desc">A line chart showing each player's daily rank across ${days.length} logged days. First place is at the top and fifth place at the bottom.</desc>`;
+  const daysScores = periods.map(({ scores }) => scores);
+  let svg = `<title id="chart-title">${chartView === "weekly" ? "Weekly" : "Daily"} player rankings</title><desc id="chart-desc">${elements.chartDescription.textContent} Ties share a place. Fifth place is at the bottom.</desc>`;
+  if (!periods.length) svg += `<text class="chart-x-label" x="${width / 2}" y="${height / 2}">No finalized rounds yet</text>`;
   for (let rank = 1; rank <= 5; rank += 1) {
     svg += `<line class="chart-grid" x1="${margin.left}" y1="${y(rank)}" x2="${width - margin.right}" y2="${y(rank)}"></line>`;
     svg += `<text class="chart-y-label" x="0" y="${y(rank) + 3}">${rank}${rank === 1 ? "ST" : rank === 2 ? "ND" : rank === 3 ? "RD" : "TH"}</text>`;
   }
-  days.forEach((date, index) => {
-    svg += `<text class="chart-x-label" x="${x(index)}" y="${height - 5}">${formatDate(date, { month: "short", day: "numeric" })}</text>`;
+  periods.forEach((period, index) => {
+    svg += `<text class="chart-x-label" x="${x(index)}" y="${height - 5}">${period.label}</text>`;
   });
 
   for (const player of PLAYERS) {
     const points = [];
     for (const [dayIndex, dayScores] of daysScores.entries()) {
       const playerIndex = dayScores.findIndex(({ player: name }) => name === player.name);
-      if (playerIndex !== -1) points.push({ x: x(dayIndex), y: y(rankFor(dayScores, playerIndex)), date: days[dayIndex], score: dayScores[playerIndex].points });
+      if (playerIndex !== -1) points.push({ x: x(dayIndex), y: y(rankFor(dayScores, playerIndex)), period: periods[dayIndex], rank: rankFor(dayScores, playerIndex), score: dayScores[playerIndex].points });
     }
     if (!points.length) continue;
     const hidden = visiblePlayers.has(player.name) ? "" : ' style="display:none"';
     const path = points.map((point, index) => `${index ? "L" : "M"}${point.x},${point.y}`).join(" ");
     svg += `<path class="chart-line" d="${path}" stroke="${player.color}"${hidden}></path>`;
-    svg += points.map((point) => `<circle class="chart-dot" cx="${point.x}" cy="${point.y}" r="3.5" fill="${player.color}"${hidden}><title>${player.name}: ${formatDate(point.date)}, ${formatNumber(point.score)} points</title></circle>`).join("");
+    svg += points.map((point) => `<circle class="chart-dot" cx="${point.x}" cy="${point.y}" r="3.5" fill="${player.color}"${hidden}><title>${player.name}: ${point.period.label}, place ${point.rank}, ${formatNumber(point.score)} points${chartView === "weekly" ? ` across ${point.period.days.length} finalized ${point.period.days.length === 1 ? "round" : "rounds"}` : ""}</title></circle>`).join("");
   }
   elements.chart.setAttribute("viewBox", `0 0 ${width} ${height}`);
   elements.chart.innerHTML = svg;
@@ -304,12 +373,23 @@ function renderRoundDetail(date) {
 }
 
 function render() {
-  const days = getDays();
+  const months = [...new Set(getDays().map((date) => date.slice(0, 7)))].reverse();
+  if (!months.includes(selectedMonth)) selectedMonth = months[0] || "";
+  elements.seasonSelect.innerHTML = months.map((month, index) =>
+    `<option value="${month}">${formatDate(`${month}-01`, { month: "long", year: "numeric" })}${index === 0 ? " (current)" : " (archive)"}</option>`
+  ).join("");
+  elements.seasonSelect.value = selectedMonth;
+  elements.seasonSelect.disabled = !months.length;
+  const archived = months.length > 0 && selectedMonth !== months[0];
+  elements.seasonStampLabel.textContent = archived ? "ARCHIVED SEASON" : "CURRENT SEASON";
+  elements.crownLabel.textContent = archived ? "THIS MONTH'S CROWN" : "CURRENTLY WEARING THE CROWN";
+  elements.seasonDescription.textContent = `${archived ? "Viewing an archived month. " : ""}Each month is a fresh season. Previous months stay available here.`;
+  const days = getSeasonDays();
   const finalDays = getFinalDays(days);
-  const standings = getStandings();
+  const standings = getStandings(days);
   const previousStandings = getStandings(finalDays.slice(0, -1));
   const latestDate = days[days.length - 1];
-  renderChampion(standings, previousStandings, latestDate === finalDays[finalDays.length - 1]);
+  renderChampion(standings, previousStandings, !archived && latestDate === finalDays[finalDays.length - 1], days);
   renderStandings(standings, previousStandings);
   renderChart(days);
   renderRounds(days);
@@ -318,6 +398,8 @@ function render() {
   if (latestDate) {
     const [year, month] = latestDate.split("-");
     elements.seasonLabel.textContent = `${new Intl.DateTimeFormat("en-US", { month: "short", timeZone: "UTC" }).format(new Date(`${year}-${month}-01T12:00:00Z`)).toUpperCase()} '${year.slice(-2)}`;
+  } else {
+    elements.seasonLabel.textContent = "NO SEASON";
   }
 }
 
@@ -325,7 +407,7 @@ elements.roundSelector.addEventListener("click", (event) => {
   const button = event.target.closest("[data-date]");
   if (!button || button.dataset.date === selectedDate) return;
   selectedDate = button.dataset.date;
-  renderRounds(getDays());
+  renderRounds(getSeasonDays());
 });
 
 elements.legend.addEventListener("click", (event) => {
@@ -334,7 +416,24 @@ elements.legend.addEventListener("click", (event) => {
   const player = button.dataset.player;
   if (visiblePlayers.has(player)) visiblePlayers.delete(player);
   else visiblePlayers.add(player);
-  renderChart(getDays());
+  renderChart(getSeasonDays());
+});
+
+elements.seasonSelect.addEventListener("change", (event) => {
+  selectedMonth = event.target.value;
+  selectedDate = "";
+  chartRange = 0;
+  render();
+});
+
+elements.chartView.addEventListener("change", (event) => {
+  chartView = event.target.value;
+  renderChart(getSeasonDays());
+});
+
+elements.chartRange.addEventListener("change", (event) => {
+  chartRange = Number(event.target.value);
+  renderChart(getSeasonDays());
 });
 
 if (typeof scores === "undefined" || !Array.isArray(scores) || !scores.every(isValidEntry)) {

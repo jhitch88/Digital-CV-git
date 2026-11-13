@@ -35,16 +35,22 @@
           </div>
           <div class="season-stamp">
             <span class="stamp-icon" aria-hidden="true">✳</span>
-            <span class="stamp-label">THE CURRENT<br>SEASON</span>
+            <span class="stamp-label" id="season-stamp-label">CURRENT SEASON</span>
             <strong id="season-label">NOV '26</strong>
             <span class="stamp-days" id="days-logged">5 DAYS LOGGED</span>
           </div>
         </section>
 
+        <section class="season-controls" aria-label="Monthly seasons">
+          <label for="season-select">Season / archive</label>
+          <select id="season-select"></select>
+          <p id="season-description">Each month is a fresh season. Previous months stay available here.</p>
+        </section>
+
         <section class="champion-banner" aria-labelledby="champion-heading">
           <div class="banner-grain" aria-hidden="true"></div>
           <div class="champion-copy">
-            <p class="eyebrow light-eyebrow"><span aria-hidden="true">✦</span> CURRENTLY WEARING THE CROWN</p>
+            <p class="eyebrow light-eyebrow"><span aria-hidden="true">✦</span> <span id="crown-label">CURRENTLY WEARING THE CROWN</span></p>
             <h2 id="champion-heading">The tide is in <span id="champion-name">Steven</span>'s favor.</h2>
             <p id="champion-subtitle">A commanding lead. The rest of the crew is plotting a comeback.</p>
           </div>
@@ -99,7 +105,16 @@
               </div>
               <span class="chart-mark" aria-hidden="true">↗</span>
             </div>
-            <p class="chart-description">Each finalized day's finish, from first to fifth. First place is at the top of the chart. Provisional rounds stay off the chart.</p>
+            <div class="chart-controls">
+              <label for="chart-view">View</label>
+              <select id="chart-view">
+                <option value="daily">Daily places</option>
+                <option value="weekly">Weekly places</option>
+              </select>
+              <label for="chart-range" id="chart-range-label">Rounds</label>
+              <select id="chart-range"></select>
+            </div>
+            <p class="chart-description" id="chart-description" aria-live="polite">Latest 7 finalized rounds. First place is at the top. Provisional rounds stay off the chart.</p>
             <div class="chart-wrap" id="rank-chart-wrap">
               <svg id="rank-chart" role="img" aria-labelledby="chart-title chart-desc"></svg>
             </div>

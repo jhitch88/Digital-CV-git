@@ -16,9 +16,11 @@ function renderPage(ledger, { reducedMotion = false } = {}) {
       innerHTML: "",
       textContent: "",
       children: [],
+      attributes: {},
+      listeners: {},
       style: { setProperty() {} },
-      setAttribute() {},
-      addEventListener() {},
+      setAttribute(name, value) { this.attributes[name] = value; },
+      addEventListener(name, callback) { this.listeners[name] = callback; },
       append(...children) { this.children.push(...children); },
       replaceChildren(...children) { this.children = children; },
       querySelectorAll() { return []; }
@@ -249,4 +251,150 @@ test("published November 9 ledger counts Chris and Steven's confirmed zero score
       9
     );
   }
+});
+
+function changeSelect(nodes, selector, value) {
+  const node = nodes.get(selector);
+  node.value = value;
+  node.listeners.change({ target: node });
+}
+
+test("daily chart caps each range at seven finalized rounds and keeps all recaps", () => {
+  const ledger = fs.readFileSync(path.join(projectDir, "scores.js"), "utf8");
+  const { nodes } = renderPage(ledger);
+  const chart = () => nodes.get("#rank-chart").innerHTML;
+  assert.equal((chart().match(/class="chart-dot"/g) || []).length, 35);
+  assert.equal((chart().match(/class="chart-x-label"/g) || []).length, 7);
+  assert.match(chart(), /Nov 6/);
+  assert.doesNotMatch(chart(), />Nov 5</);
+  assert.match(nodes.get("#chart-range").innerHTML, /Latest: Nov 6–12/);
+  assert.equal((nodes.get("#round-selector").innerHTML.match(/class="round-button"/g) || []).length, 12);
+  const total = nodes.get("#champion-total").textContent;
+  changeSelect(nodes, "#chart-range", "1");
+  assert.equal((chart().match(/class="chart-dot"/g) || []).length, 25);
+  assert.match(chart(), /Nov 1/);
+  assert.doesNotMatch(chart(), /Nov 6/);
+  assert.equal(nodes.get("#champion-total").textContent, total);
+  nodes.get("#chart-legend").listeners.click({
+    target: { closest: () => ({ dataset: { player: "Jimmy" } }) }
+  });
+  assert.match(chart(), /fill="#648b66" style="display:none"/);
+  assert.doesNotMatch(chart(), /Nov 6/);
+  changeSelect(nodes, "#chart-view", "weekly");
+  assert.equal((chart().match(/class="chart-x-label"/g) || []).length, 3);
+  assert.equal((chart().match(/class="chart-dot"/g) || []).length, 15);
+  assert.equal(nodes.get("#chart-range").hidden, true);
+  assert.match(chart(), /fill="#648b66" style="display:none"/);
+  changeSelect(nodes, "#chart-view", "daily");
+  assert.equal(nodes.get("#chart-range").hidden, false);
+  assert.doesNotMatch(chart(), /Nov 6/);
+});
+
+test("weekly ranks use point totals, shared ties and Monday boundaries, excluding provisional rounds", () => {
+  const { nodes, context } = renderPage(`const scores = [
+    { date: "2026-11-01", player: "Jimmy", points: 100 },
+    { date: "2026-11-02", player: "Jimmy", points: 10 },
+    { date: "2026-11-02", player: "Steven", points: 100 },
+    { date: "2026-11-08", player: "Jimmy", points: 90 },
+    { date: "2026-11-08", player: "Steven", points: 0 },
+    { date: "2026-11-08", player: "Kasra", points: 95 },
+    { date: "2026-11-09", player: "Jimmy", points: 1 },
+    { date: "2026-11-10", player: "Steven", points: 900 },
+    { date: "2026-11-10", player: "Jimmy", points: 0, pending: true }
+  ];`);
+  const periods = JSON.parse(vm.runInContext(
+    "JSON.stringify(getWeeklyPeriods(getFinalDays(getSeasonDays())))", context
+  ));
+  assert.deepEqual(periods.map(({ days }) => days), [
+    ["2026-11-01"], ["2026-11-02", "2026-11-08"], ["2026-11-09"]
+  ]);
+  assert.deepEqual(periods[1].scores, [
+    { player: "Steven", points: 100 }, { player: "Jimmy", points: 100 }, { player: "Kasra", points: 95 }
+  ]);
+  changeSelect(nodes, "#chart-view", "weekly");
+  const chart = nodes.get("#rank-chart").innerHTML;
+  assert.match(chart, /Jimmy: Nov 2–8, place 1, 100 points across 2 finalized rounds/);
+  assert.match(chart, /Steven: Nov 2–8, place 1, 100 points across 2 finalized rounds/);
+  assert.match(chart, /Kasra: Nov 2–8, place 3, 95 points/);
+  assert.doesNotMatch(chart, /900 points|Nov 10/);
+});
+
+test("monthly seasons isolate all results and allow archive and current-month navigation", () => {
+  const { nodes } = renderPage(`const scores = [
+    { date: "2026-11-30", player: "Steven", points: 440, event: "squid" },
+    { date: "2026-12-01", player: "Jimmy", points: 100 },
+    { date: "2026-12-02", player: "Steven", points: 200 },
+    { date: "2026-12-03", player: "Jimmy", points: 0, pending: true }
+  ];`);
+  assert.equal(nodes.get("#season-select").value, "2026-12");
+  assert.match(nodes.get("#season-select").innerHTML, /November 2026 \(archive\)/);
+  assert.equal(nodes.get("#champion-name").textContent, "Steven");
+  assert.equal(nodes.get("#champion-total").textContent, "200");
+  assert.match(nodes.get("#biggest-score").innerHTML, /200 pts/);
+  assert.match(nodes.get("#squid-count").innerHTML, /^0 /);
+  assert.match(playerRow(nodes.get("#standings-body").innerHTML, "Steven"), /<strong>1<\/strong> win/);
+  assert.equal(nodes.get("#days-logged").textContent, "3 DAYS LOGGED");
+  assert.doesNotMatch(nodes.get("#round-selector").innerHTML, /Nov 30/);
+  changeSelect(nodes, "#chart-view", "weekly");
+  assert.doesNotMatch(nodes.get("#rank-chart").innerHTML, /Nov 30|440 points/);
+  changeSelect(nodes, "#season-select", "2026-11");
+  assert.equal(nodes.get("#champion-total").textContent, "440");
+  assert.equal(nodes.get("#champion-name").textContent, "Steven");
+  assert.match(nodes.get("#biggest-score").innerHTML, /440 pts/);
+  assert.match(nodes.get("#squid-count").innerHTML, /^1 /);
+  assert.equal(nodes.get("#round-count").textContent, "1 ROUND");
+  assert.equal(nodes.get("#season-label").textContent, "NOV '26");
+  assert.equal(nodes.get("#season-stamp-label").textContent, "ARCHIVED SEASON");
+  assert.match(nodes.get("#season-description").textContent, /archived/);
+  assert.doesNotMatch(nodes.get("#champion-subtitle").textContent, /today/);
+  assert.match(playerRow(nodes.get("#standings-body").innerHTML, "Steven"), /rank-movement new/);
+  assert.doesNotMatch(nodes.get("#rank-chart").innerHTML, /Dec/);
+  assert.match(nodes.get("#round-detail").innerHTML, /November 30/);
+  assert.equal(nodes.get("#celebration-announcements").children.length, 1);
+  changeSelect(nodes, "#season-select", "2026-12");
+  assert.equal(nodes.get("#champion-total").textContent, "200");
+  assert.equal(nodes.get("#season-stamp-label").textContent, "CURRENT SEASON");
+  assert.match(nodes.get("#round-detail").innerHTML, /December 3/);
+  assert.equal(nodes.get("#celebration-announcements").children.length, 0);
+});
+
+test("a new month with only provisional scores does not inherit an archived crown or highlights", () => {
+  const { nodes } = renderPage(`const scores = [
+    { date: "2026-11-30", player: "Steven", points: 440, event: "squid" },
+    { date: "2026-12-01", player: "Jimmy", points: 0, pending: true }
+  ];`);
+  assert.equal(nodes.get("#champion-name").textContent, "Nobody");
+  assert.equal(nodes.get("#champion-total").textContent, "0");
+  assert.equal(nodes.get("#champion-lead").textContent, "NO SCORES YET");
+  assert.doesNotMatch(nodes.get("#standings-body").innerHTML, /champion-crown/);
+  assert.match(nodes.get("#biggest-score").innerHTML, /no scores yet/);
+  assert.match(nodes.get("#most-wins").innerHTML, /no wins yet/);
+  assert.match(nodes.get("#squid-count").innerHTML, /^0 /);
+  assert.match(nodes.get("#chart-description").textContent, /No finalized rounds/);
+  assert.equal(nodes.get("#chart-range").disabled, true);
+  assert.doesNotMatch(nodes.get("#rank-chart").innerHTML, /class="chart-dot"/);
+  changeSelect(nodes, "#chart-view", "weekly");
+  assert.doesNotMatch(nodes.get("#rank-chart").innerHTML, /class="chart-dot"/);
+  changeSelect(nodes, "#season-select", "2026-11");
+  assert.equal(nodes.get("#champion-total").textContent, "440");
+});
+
+test("daily ranges remain capped for a full month and handle empty data", () => {
+  const { nodes, context } = renderPage(`const scores = Array.from({ length: 31 }, (_, index) => ({
+    date: "2026-12-" + String(index + 1).padStart(2, "0"), player: "Jimmy", points: 100
+  }));`);
+  const ranges = JSON.parse(vm.runInContext(
+    "JSON.stringify(getDailyRanges(getFinalDays(getSeasonDays())))", context
+  ));
+  assert.deepEqual(ranges.map((range) => range.length), [7, 7, 7, 7, 3]);
+  assert.equal(new Set(ranges.flat()).size, 31);
+  changeSelect(nodes, "#chart-range", "4");
+  assert.equal((nodes.get("#rank-chart").innerHTML.match(/class="chart-dot"/g) || []).length, 3);
+  changeSelect(nodes, "#chart-view", "weekly");
+  assert.equal((nodes.get("#rank-chart").innerHTML.match(/class="chart-dot"/g) || []).length, 5);
+  const empty = renderPage("const scores = [];").nodes;
+  assert.equal(empty.get("#season-select").disabled, true);
+  assert.equal(empty.get("#season-label").textContent, "NO SEASON");
+  assert.match(empty.get("#round-detail").innerHTML, /No rounds published/);
+  assert.match(empty.get("#chart-description").textContent, /No finalized rounds/);
 });

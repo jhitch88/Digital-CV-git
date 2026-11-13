@@ -2,6 +2,8 @@
 // Events celebrate on the latest round at page load and when opening an older round.
 // Use points: 0, pending: true for missing submissions; the whole round stays provisional.
 // Replace pending scores and remove pending when submitted. At close, remove pending to confirm a zero.
+// Keep older entries: months become browsable seasons automatically, with totals reset per month.
+// Weekly chart ranks use Monday-Sunday point totals within the selected month; daily scores stay intact.
 const scores = [
   { date: "2026-11-01", player: "Kasra", points: 130 },
   { date: "2026-11-01", player: "Brady", points: 200 },
