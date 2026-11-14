@@ -122,6 +122,22 @@
             <div class="chart-legend" id="chart-legend" aria-label="Toggle players on the chart"></div>
           </section>
 
+          <section class="panel weekly-panel" id="weekly" aria-labelledby="weekly-title">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">THE WEEKLY TIDE</p>
+                <h2 id="weekly-title">Weekly tide report<span class="heading-dot">.</span></h2>
+              </div>
+            </div>
+            <div class="chart-controls">
+              <label for="week-select">Review week</label>
+              <select id="week-select"></select>
+            </div>
+            <div id="weekly-detail" aria-live="polite"></div>
+            <div class="weekly-wrap-celebration" id="weekly-celebration" role="status" hidden></div>
+            <p class="table-footnote">Monday–Sunday · Month-scoped totals · Provisional rounds excluded.</p>
+          </section>
+
           <section class="panel rounds-panel" id="rounds" aria-labelledby="rounds-title">
             <div class="panel-heading rounds-heading">
               <div>

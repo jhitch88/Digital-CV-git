@@ -27,6 +27,9 @@ const elements = {
   chartRange: document.querySelector("#chart-range"),
   chartRangeLabel: document.querySelector("#chart-range-label"),
   chartDescription: document.querySelector("#chart-description"),
+  weekSelect: document.querySelector("#week-select"),
+  weeklyDetail: document.querySelector("#weekly-detail"),
+  weeklyCelebration: document.querySelector("#weekly-celebration"),
   celebrationParticles: document.querySelector("#celebration-particles"),
   celebrationAnnouncements: document.querySelector("#celebration-announcements")
 };
@@ -35,6 +38,9 @@ let selectedDate = "";
 let selectedMonth = "";
 let chartView = "daily";
 let chartRange = 0;
+let selectedWeek = "";
+const celebratedWeeks = new Set();
+let weeklyCelebrationTimeout;
 let visiblePlayers = new Set(PLAYERS.map(({ name }) => name));
 let celebrationTimeout;
 
@@ -140,16 +146,26 @@ function getDailyRanges(days) {
   return ranges;
 }
 
+function shiftDate(date, offset) {
+  const shifted = new Date(`${date}T12:00:00Z`);
+  shifted.setUTCDate(shifted.getUTCDate() + offset);
+  return shifted.toISOString().slice(0, 10);
+}
+
+function getWeekStart(date) {
+  return shiftDate(date, -(new Date(`${date}T12:00:00Z`).getUTCDay() + 6) % 7);
+}
+
 function getWeeklyPeriods(days) {
   const weeks = new Map();
   for (const date of days) {
-    const monday = new Date(`${date}T12:00:00Z`);
-    monday.setUTCDate(monday.getUTCDate() - (monday.getUTCDay() + 6) % 7);
-    const key = monday.toISOString().slice(0, 10);
+    const key = getWeekStart(date);
     if (!weeks.has(key)) weeks.set(key, []);
     weeks.get(key).push(date);
   }
-  return [...weeks.values()].map((weekDays) => ({
+  return [...weeks.entries()].map(([start, weekDays]) => ({
+    start,
+    end: shiftDate(start, 6),
     days: weekDays,
     label: dateRangeLabel(weekDays),
     scores: getStandings(weekDays).filter(({ daysPlayed }) => daysPlayed)
@@ -199,6 +215,148 @@ function standingRank(standings, index) {
   return index > 0 && standings[index].total === standings[index - 1].total
     ? standingRank(standings, index - 1)
     : index + 1;
+}
+
+function getWeekReview(period, seasonDays) {
+  const expectedDays = Array.from({ length: 7 }, (_, index) => shiftDate(period.start, index))
+    .filter((date) => date.slice(0, 7) === selectedMonth);
+  const latestDate = seasonDays[seasonDays.length - 1];
+  const confirmedDays = expectedDays.filter((date) => {
+    const entries = getDayScores(date);
+    return entries.length === PLAYERS.length && !isProvisional(date)
+      && PLAYERS.every(({ name }) => entries.some(({ player }) => player === name));
+  });
+  const missingDays = expectedDays.filter((date) => date <= latestDate && !period.days.includes(date));
+  const pendingDays = period.days.filter(isProvisional);
+  const incompleteDays = period.days.filter((date) =>
+    !isProvisional(date) && !confirmedDays.includes(date));
+  const finalDays = getFinalDays(period.days);
+  const finalScores = scores.filter(({ date }) => finalDays.includes(date));
+  const standings = getStandings(period.days).filter(({ daysPlayed }) => daysPlayed);
+  const leaders = standings.filter(({ total }) => total === standings[0]?.total);
+  const partial = expectedDays.length < 7;
+  const wrapped = !partial && confirmedDays.length === 7;
+  const status = wrapped ? "Week wrapped" : partial ? "Partial week — month boundary"
+    : period.end <= latestDate ? "Week incomplete"
+      : latestDate >= shiftDate(period.start, 5) ? "Weekend watch — week in progress" : "Week in progress";
+  const previousStandings = getStandings(seasonDays.filter((date) => date < period.start));
+  const currentStandings = getStandings(seasonDays.filter((date) => date <= period.end));
+  const movements = currentStandings.filter(({ daysPlayed }) => daysPlayed).map((player) => {
+    const beforeIndex = previousStandings.findIndex(({ name }) => name === player.name);
+    const afterIndex = currentStandings.findIndex(({ name }) => name === player.name);
+    return {
+      name: player.name,
+      change: previousStandings[beforeIndex].daysPlayed
+        ? standingRank(previousStandings, beforeIndex) - standingRank(currentStandings, afterIndex) : null
+    };
+  });
+  return { expectedDays, confirmedDays, missingDays, pendingDays, incompleteDays, finalScores,
+    standings, leaders, partial, wrapped, status, movements };
+}
+
+function getWeekAnnouncement(review) {
+  const { leaders, standings, wrapped, movements } = review;
+  if (!leaders.length) {
+    return { headline: "The ocean is quiet. Too quiet.", commentary: "Waiting for finalized scores. Who's making the first splash?" };
+  }
+  const names = new Intl.ListFormat("en-US").format(leaders.map(({ name }) => name));
+  const tied = leaders.length > 1;
+  const headline = tied ? `${names}: ${wrapped ? "a shared crown!" : "deadlock at the top!"}`
+    : `${names} ${wrapped ? "takes the week!" : "holds the lead!"}`;
+  const runnerUp = standings.find(({ total }) => total < leaders[0].total);
+  const gap = runnerUp ? leaders[0].total - runnerUp.total : 0;
+  const chase = tied ? "No daylight between them. Nobody gets the ocean to themselves."
+    : !runnerUp ? "First on the board, with the rest of the crew yet to surface."
+      : wrapped ? gap <= 30 ? `Just ${formatNumber(gap)} points between first and the chase. A photo finish at sea.`
+        : `A ${formatNumber(gap)}-point finish leaves the chasing crew in the depths.`
+        : gap <= 30 ? `Just ${formatNumber(gap)} points of breathing room. One big catch could flip this.`
+          : `The crew is diving for a comeback from ${formatNumber(gap)} points back.`;
+  const biggestMove = movements.filter(({ change }) => change !== null && change !== 0)
+    .sort((a, b) => Math.abs(b.change) - Math.abs(a.change))[0];
+  const shakeUp = biggestMove
+    ? `${biggestMove.name} ${biggestMove.change > 0 ? "climbs" : "slips"} ${Math.abs(biggestMove.change)} ${Math.abs(biggestMove.change) === 1 ? "place" : "places"} in the season race.`
+    : movements.some(({ change }) => change === null) ? "A fresh season pecking order is taking shape."
+      : "The season order hasn't budged. Same sharks, same waters.";
+  const closer = wrapped ? "Who's stealing the crown next week?"
+    : review.partial ? "A split-month chapter, not a full-week verdict."
+      : review.missingDays.length || review.pendingDays.length || review.incompleteDays.length
+        ? "Unconfirmed rounds are still lurking. No final crown yet."
+        : review.status === "Weekend watch — week in progress"
+          ? "Sunday's still in play. Who makes the last splash?"
+          : "Who's breaking the surface before Sunday?";
+  return { headline, commentary: `${chase} ${shakeUp} ${closer}` };
+}
+
+function renderWeeklyReport(days) {
+  clearTimeout(weeklyCelebrationTimeout);
+  elements.weeklyCelebration.hidden = true;
+  const periods = getWeeklyPeriods(days).reverse();
+  if (!periods.some(({ start }) => start === selectedWeek)) selectedWeek = periods[0]?.start || "";
+  elements.weekSelect.innerHTML = periods.map((period) => {
+    const range = Array.from({ length: 7 }, (_, index) => shiftDate(period.start, index))
+      .filter((date) => date.slice(0, 7) === selectedMonth);
+    return `<option value="${period.start}">${dateRangeLabel(range)}</option>`;
+  }).join("");
+  elements.weekSelect.value = selectedWeek;
+  elements.weekSelect.disabled = !periods.length;
+  const period = periods.find(({ start }) => start === selectedWeek);
+  if (!period) {
+    elements.weeklyDetail.innerHTML = '<p class="round-empty">No weekly scores published yet.</p>';
+    return;
+  }
+  const review = getWeekReview(period, days);
+  const { standings, leaders, wrapped, finalScores } = review;
+  const leaderNames = new Intl.ListFormat("en-US").format(leaders.map(({ name }) => name));
+  const runnerUp = standings.find(({ total }) => total < leaders[0]?.total);
+  const gap = runnerUp ? leaders[0].total - runnerUp.total : 0;
+  const outstanding = review.expectedDays.length - review.confirmedDays.length;
+  const summary = !leaders.length ? "The weekly rivalry is waiting for finalized scores."
+    : leaders.length > 1
+      ? `${leaderNames} ${wrapped ? "share the weekly crown" : "are tied for the weekly lead"} at ${formatNumber(leaders[0].total)} points.`
+      : `${leaderNames} ${wrapped ? "wins the week" : "leads the week"}${runnerUp ? ` by ${formatNumber(gap)} points` : ` with ${formatNumber(leaders[0].total)} points`}.`;
+  const notices = [
+    review.missingDays.length ? `Missing rounds: ${review.missingDays.map((date) => formatDate(date)).join(", ")}.` : "",
+    review.pendingDays.length ? `Provisional rounds excluded: ${review.pendingDays.map((date) => formatDate(date)).join(", ")}.` : "",
+    review.incompleteDays.length ? `Missing player submissions: ${review.incompleteDays.map((date) => formatDate(date)).join(", ")}. Published non-pending scores count, but the week cannot wrap.` : "",
+    review.partial ? "This report covers only the part of the week in this monthly season." : ""
+  ].filter(Boolean).join(" ");
+  const mostWins = Math.max(0, ...standings.map(({ wins }) => wins));
+  const winLeaders = new Intl.ListFormat("en-US").format(standings.filter(({ wins }) => wins === mostWins).map(({ name }) => name));
+  const biggestScore = Math.max(0, ...finalScores.map(({ points }) => points));
+  const biggest = finalScores.filter(({ points }) => points === biggestScore);
+  const events = finalScores.filter(({ event }) => event);
+  const squidCount = events.filter(({ event }) => event === "squid").length;
+  const krillionCount = events.filter(({ event }) => event === "krillion").length;
+  const announcement = getWeekAnnouncement(review);
+  elements.weeklyDetail.innerHTML = `
+    <span class="weekly-status">${review.status}</span>
+    <h3 class="weekly-headline">${announcement.headline}</h3>
+    <p class="weekly-announcer">${announcement.commentary}</p>
+    <p class="weekly-coverage">${review.confirmedDays.length} of ${review.expectedDays.length} rounds complete. ${notices}</p>
+    <details class="weekly-scorecard">
+    <summary>Scorecard & highlights</summary>
+    <p class="weekly-summary">${summary}${!wrapped && outstanding ? ` ${outstanding} ${outstanding === 1 ? "round still needs" : "rounds still need"} confirmation.` : ""}</p>
+    <div class="weekly-podium">${standings.map((player, index) => ({ ...player, rank: standingRank(standings, index) }))
+      .filter(({ rank }) => rank <= 3).map((player) => `
+      <article class="weekly-card ${player.rank === 1 ? "first" : ""}">
+        <small>PLACE ${player.rank}${!wrapped ? " · SO FAR" : ""}</small>
+        <strong>${player.name}</strong><span>${formatNumber(player.total)} pts · ${player.wins} ${player.wins === 1 ? "daily win" : "daily wins"}</span>
+      </article>`).join("")}</div>
+    <div class="weekly-highlights">
+      <article class="weekly-card"><small>MOST DAILY WINS</small><strong>${mostWins ? winLeaders : "No wins yet"}</strong><span>${mostWins} ${mostWins === 1 ? "win" : "wins"}</span></article>
+      <article class="weekly-card"><small>BIGGEST SCORE</small><strong>${biggest.length ? `${formatNumber(biggestScore)} pts` : "No scores yet"}</strong><span>${biggest.map(({ player, date }) => `${player} · ${formatDate(date)}`).join("; ")}</span></article>
+      <article class="weekly-card"><small>SPECIAL CATCHES</small><strong>${squidCount} squid ${squidCount === 1 ? "party" : "parties"} · ${krillionCount} Krillion ${krillionCount === 1 ? "catch" : "catches"}</strong><span>${events.map(({ player, date, event }) => `${player} · ${formatDate(date)} · ${event === "squid" ? "squid party" : "Krillion"}`).join("; ") || "A quiet week at sea."}</span></article>
+    </div>
+    <div class="weekly-movement"><h3>Season shake-up since the week began</h3><ul>${review.movements.map(({ name, change }) => `<li>${name}: ${change === null ? "new this season" : change === 0 ? "holding steady" : `${change > 0 ? "up" : "down"} ${Math.abs(change)} ${Math.abs(change) === 1 ? "place" : "places"}`}</li>`).join("")}</ul></div>
+    <p class="weekly-coverage">A full week wraps only when all seven rounds have confirmed scores for every player. Month-boundary weeks stay partial.</p>
+    </details>`;
+  const latestDate = getDays().slice(-1)[0];
+  if (wrapped && latestDate === period.end && !celebratedWeeks.has(period.start)) {
+    celebratedWeeks.add(period.start);
+    elements.weeklyCelebration.textContent = `🏆 WEEK WRAPPED! ${leaderNames} ${leaders.length === 1 ? "takes" : "share"} the weekly crown.`;
+    elements.weeklyCelebration.hidden = false;
+    weeklyCelebrationTimeout = setTimeout(() => { elements.weeklyCelebration.hidden = true; }, 4500);
+  }
 }
 
 function renderStandings(standings, previousStandings) {
@@ -393,6 +551,7 @@ function render() {
   renderStandings(standings, previousStandings);
   renderChart(days);
   renderRounds(days);
+  renderWeeklyReport(days);
   elements.daysLogged.textContent = `${days.length} ${days.length === 1 ? "DAY" : "DAYS"} LOGGED`;
   elements.roundCount.textContent = `${days.length} ${days.length === 1 ? "ROUND" : "ROUNDS"}`;
   if (latestDate) {
@@ -423,6 +582,7 @@ elements.seasonSelect.addEventListener("change", (event) => {
   selectedMonth = event.target.value;
   selectedDate = "";
   chartRange = 0;
+  selectedWeek = "";
   render();
 });
 
@@ -434,6 +594,11 @@ elements.chartView.addEventListener("change", (event) => {
 elements.chartRange.addEventListener("change", (event) => {
   chartRange = Number(event.target.value);
   renderChart(getSeasonDays());
+});
+
+elements.weekSelect.addEventListener("change", (event) => {
+  selectedWeek = event.target.value;
+  renderWeeklyReport(getSeasonDays());
 });
 
 if (typeof scores === "undefined" || !Array.isArray(scores) || !scores.every(isValidEntry)) {

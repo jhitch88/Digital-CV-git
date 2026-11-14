@@ -4,6 +4,9 @@
 // Replace pending scores and remove pending when submitted. At close, remove pending to confirm a zero.
 // Keep older entries: months become browsable seasons automatically, with totals reset per month.
 // Weekly chart ranks use Monday-Sunday point totals within the selected month; daily scores stay intact.
+// Weekly reports wrap only with seven dates and confirmed scores for all five players.
+// Month-edge weeks stay partial. The latest wrapped week celebrates once per page load, not on archive visits.
+// Weekly announcer copy follows the lead, ties and season movement; detailed stats live in the collapsed scorecard.
 const scores = [
   { date: "2026-11-01", player: "Kasra", points: 130 },
   { date: "2026-11-01", player: "Brady", points: 200 },
@@ -69,5 +72,10 @@ const scores = [
   { date: "2026-11-13", player: "Brady", points: 275 },
   { date: "2026-11-13", player: "Chris", points: 250 },
   { date: "2026-11-13", player: "Kasra", points: 410 },
-  { date: "2026-11-13", player: "Steven", points: 330 }
+  { date: "2026-11-13", player: "Steven", points: 330 },
+  { date: "2026-11-14", player: "Chris", points: 265 },
+  { date: "2026-11-14", player: "Brady", points: 190 },
+  { date: "2026-11-14", player: "Jimmy", points: 175 },
+  { date: "2026-11-14", player: "Steven", points: 325 },
+  { date: "2026-11-14", player: "Kasra", points: 300 }
 ];
