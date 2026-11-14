@@ -261,7 +261,9 @@ function changeSelect(nodes, selector, value) {
 
 test("daily chart caps each range at seven finalized rounds and keeps all recaps", () => {
   const ledger = fs.readFileSync(path.join(projectDir, "scores.js"), "utf8");
-  const { nodes } = renderPage(ledger);
+  const { nodes } = renderPage(`${ledger}
+    scores.splice(0, scores.length, ...scores.filter(({ date }) => date >= "2026-11-01" && date <= "2026-11-12"));
+  `);
   const chart = () => nodes.get("#rank-chart").innerHTML;
   assert.equal((chart().match(/class="chart-dot"/g) || []).length, 35);
   assert.equal((chart().match(/class="chart-x-label"/g) || []).length, 7);
