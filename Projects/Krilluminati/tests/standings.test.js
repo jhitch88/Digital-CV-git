@@ -81,6 +81,42 @@ function playerRow(html, player) {
   return row;
 }
 
+test("season displays averages while rankings and lead gaps remain based on total points", () => {
+  const { nodes } = renderPage(`const scores = [
+    { date: "2026-11-01", player: "Steven", points: 100 },
+    { date: "2026-11-01", player: "Jimmy", points: 150 },
+    { date: "2026-11-02", player: "Steven", points: 0 },
+    { date: "2026-11-03", player: "Steven", points: 100 },
+    { date: "2026-11-04", player: "Steven", points: 900 },
+    { date: "2026-11-04", player: "Jimmy", points: 0, pending: true }
+  ];`);
+  const standings = nodes.get("#standings-body").innerHTML;
+  assert.equal(nodes.get("#champion-name").textContent, "Steven");
+  assert.equal(nodes.get("#champion-total").textContent, "65");
+  assert.equal(nodes.get("#champion-lead").textContent, "+50 TOTAL PTS AHEAD");
+  assert.match(playerRow(standings, "Steven"), /class="points-cell">65<\/td>/);
+  assert.match(playerRow(standings, "Jimmy"), /class="points-cell">150<\/td>/);
+  assert.match(playerRow(standings, "Jimmy"), /class="lead-value">−50<\/span>/);
+  assert.match(playerRow(standings, "Brady"), /class="points-cell">—<\/td>/);
+  assert.ok(standings.indexOf("</span>Steven") < standings.indexOf("</span>Jimmy"));
+});
+
+test("averages round to the nearest five, including halfway and confirmed zero scores", () => {
+  const { nodes } = renderPage(`const scores = [
+    { date: "2026-11-01", player: "Jimmy", points: 10 },
+    { date: "2026-11-02", player: "Jimmy", points: 15 },
+    { date: "2026-11-01", player: "Chris", points: 10 },
+    { date: "2026-11-02", player: "Chris", points: 10 },
+    { date: "2026-11-03", player: "Chris", points: 15 },
+    { date: "2026-11-01", player: "Brady", points: 0 }
+  ];`);
+  const standings = nodes.get("#standings-body").innerHTML;
+  assert.match(playerRow(standings, "Jimmy"), /class="points-cell">15<\/td>/);
+  assert.match(playerRow(standings, "Chris"), /class="points-cell">10<\/td>/);
+  assert.match(playerRow(standings, "Brady"), /class="points-cell">0<\/td>/);
+  assert.match(playerRow(standings, "Kasra"), /class="points-cell">—<\/td>/);
+});
+
 test("Krillion celebration showcases the golden shrimp and cleans up", () => {
   const { nodes, context, timers } = renderPage(`const scores = [
     { date: "2026-11-01", player: "Jimmy", points: 400, event: "krillion" }
@@ -167,6 +203,42 @@ test("a new sole leader gets a crown-change subtitle on the latest finalized rou
   assert.equal(nodes.get("#champion-subtitle").textContent, "Kasra takes the crown today. Who's coming for it?");
 });
 
+test("commanding lead commentary varies by day but stays stable on rerender and reload", () => {
+  const ledger = `const scores = [
+    { date: "2026-11-01", player: "Steven", points: 200 },
+    { date: "2026-11-01", player: "Jimmy", points: 100 },
+    { date: "2026-11-02", player: "Steven", points: 200 },
+    { date: "2026-11-02", player: "Jimmy", points: 100 }
+  ];`;
+  const messages = new Set();
+  for (let day = 15; day <= 22; day += 1) {
+    const today = `2026-11-${day}T12:00:00`;
+    const { nodes, context } = renderPage(ledger, { today });
+    const message = nodes.get("#champion-subtitle").textContent;
+    messages.add(message);
+    vm.runInContext("render()", context);
+    assert.equal(nodes.get("#champion-subtitle").textContent, message);
+    assert.equal(renderPage(ledger, { today }).nodes.get("#champion-subtitle").textContent, message);
+  }
+  assert.ok(messages.size > 1);
+  assert.ok(messages.has("A commanding lead. The rest of the crew is plotting a comeback."));
+});
+
+test("close leads and ties keep their specific champion commentary", () => {
+  for (const [jimmyScore, expected] of [
+    [95, "Just 5 total points ahead of Jimmy. Anything can happen."],
+    [100, "Jimmy and Steven are neck and neck."]
+  ]) {
+    const { nodes } = renderPage(`const scores = [
+      { date: "2026-11-01", player: "Steven", points: 100 },
+      { date: "2026-11-01", player: "Jimmy", points: ${jimmyScore} },
+      { date: "2026-11-02", player: "Steven", points: 0 },
+      { date: "2026-11-02", player: "Jimmy", points: 0 }
+    ];`);
+    assert.equal(nodes.get("#champion-subtitle").textContent, expected);
+  }
+});
+
 test("provisional rounds do not trigger a new-champion subtitle", () => {
   const { nodes } = renderPage(`const scores = [
     { date: "2026-11-01", player: "Steven", points: 100 },
@@ -225,7 +297,7 @@ test("removing pending finalizes the round, including confirmed zeros", () => {
   const { nodes, context } = renderPage(partialLedger.replaceAll(", pending: true", ""));
   assert.doesNotMatch(nodes.get("#round-detail").innerHTML, /Provisional|pending/);
   assert.equal(nodes.get("#champion-name").textContent, "Jimmy");
-  assert.equal(nodes.get("#champion-total").textContent, "495");
+  assert.equal(nodes.get("#champion-total").textContent, "250");
   assert.match(nodes.get("#biggest-score").innerHTML, /Kasra.*390 pts/);
   assert.match(nodes.get("#rank-chart").innerHTML, /Nov 9/);
   assert.equal(vm.runInContext('getStandings().find(({ name }) => name === "Kasra").wins', context), 1);
@@ -387,7 +459,7 @@ test("a new month with only provisional scores does not inherit an archived crow
     { date: "2026-12-01", player: "Jimmy", points: 0, pending: true }
   ];`);
   assert.equal(nodes.get("#champion-name").textContent, "Nobody");
-  assert.equal(nodes.get("#champion-total").textContent, "0");
+  assert.equal(nodes.get("#champion-total").textContent, "—");
   assert.equal(nodes.get("#champion-lead").textContent, "NO SCORES YET");
   assert.doesNotMatch(nodes.get("#standings-body").innerHTML, /champion-crown/);
   assert.match(nodes.get("#biggest-score").innerHTML, /no scores yet/);

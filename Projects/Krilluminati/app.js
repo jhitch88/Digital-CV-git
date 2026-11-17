@@ -119,6 +119,12 @@ function formatNumber(number) {
   return new Intl.NumberFormat("en-US").format(number);
 }
 
+function formatAverage(player) {
+  return player.daysPlayed
+    ? formatNumber(Math.round(player.total / player.daysPlayed / 5) * 5)
+    : "—";
+}
+
 function formatDate(date, options = { month: "short", day: "numeric" }) {
   return new Intl.DateTimeFormat("en-US", { timeZone: "UTC", ...options })
     .format(new Date(`${date}T12:00:00Z`));
@@ -390,10 +396,24 @@ function renderStandings(standings, previousStandings) {
       <td><span class="rank-number ${rank === 1 && player.daysPlayed ? "first" : ""}">${player.daysPlayed ? String(rank).padStart(2, "0") : "—"}</span></td>
       <td><span class="player-cell"><span class="player-avatar" style="background:${info.tint};color:${info.color}">${player.name[0]}</span>${player.name}${rank === 1 && player.daysPlayed ? '<span class="champion-crown" aria-label="season leader">👑</span>' : ""}${movement}</span></td>
       <td class="wins-cell"><strong>${player.wins}</strong> ${player.wins === 1 ? "win" : "wins"}</td>
-      <td class="points-cell">${formatNumber(player.total)}</td>
+      <td class="points-cell">${formatAverage(player)}</td>
       <td class="lead-cell"><span class="lead-track" aria-hidden="true"><span style="width:${progress}%"></span></span><span class="lead-value">${gap === 0 ? "—" : `−${formatNumber(gap)}`}</span></td>
     </tr>`;
   }).join("");
+}
+
+function dailyLeadMessage() {
+  const messages = [
+    "A commanding lead. The rest of the crew is plotting a comeback.",
+    "The crown is sitting comfortably, but the crew is circling.",
+    "A strong current at the top. Who's ready to make waves?",
+    "The leader has clear water ahead. The chase is on."
+  ];
+  const today = new Date();
+  const date = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+  let hash = 2166136261;
+  for (const character of date) hash = Math.imul(hash ^ character.charCodeAt(0), 16777619);
+  return messages[(hash >>> 0) % messages.length];
 }
 
 function renderChampion(standings, previousStandings, championChangedToday, days = getSeasonDays()) {
@@ -401,7 +421,7 @@ function renderChampion(standings, previousStandings, championChangedToday, days
   const second = standings[1];
   if (!leader || !getFinalDays(days).length) {
     elements.championName.textContent = "Nobody";
-    elements.championTotal.textContent = "0";
+    elements.championTotal.textContent = "—";
     elements.championLead.textContent = "NO SCORES YET";
     elements.championSubtitle.textContent = "The rivalry begins when the first scores arrive.";
     document.querySelector("#most-wins").innerHTML = "— <span>· no wins yet</span>";
@@ -410,23 +430,23 @@ function renderChampion(standings, previousStandings, championChangedToday, days
     return;
   }
   elements.championName.textContent = leader.name;
-  elements.championTotal.textContent = formatNumber(leader.total);
+  elements.championTotal.textContent = formatAverage(leader);
   const newlyCrowned = championChangedToday
     && previousStandings[0]
     && leader.name !== previousStandings[0].name
     && (!second || leader.total > second.total);
   if (newlyCrowned) {
-    elements.championLead.textContent = second ? `+${formatNumber(leader.total - second.total)} AHEAD` : "OUT IN FRONT";
+    elements.championLead.textContent = second ? `+${formatNumber(leader.total - second.total)} TOTAL PTS AHEAD` : "OUT IN FRONT";
     elements.championSubtitle.textContent = `${leader.name} takes the crown today. Who's coming for it?`;
   } else if (second && leader.total === second.total) {
     elements.championLead.textContent = "ALL TIED UP";
     elements.championSubtitle.textContent = `${leader.name} and ${second.name} are neck and neck.`;
   } else {
     const gap = leader.total - (second?.total || 0);
-    elements.championLead.textContent = second ? `+${formatNumber(gap)} AHEAD` : "OUT IN FRONT";
+    elements.championLead.textContent = second ? `+${formatNumber(gap)} TOTAL PTS AHEAD` : "OUT IN FRONT";
     elements.championSubtitle.textContent = second
-      ? gap <= 10 ? `Just ${formatNumber(gap)} point${gap === 1 ? "" : "s"} ahead of ${second.name}. Anything can happen.`
-        : "A commanding lead. The rest of the crew is plotting a comeback."
+      ? gap <= 10 ? `Just ${formatNumber(gap)} total point${gap === 1 ? "" : "s"} ahead of ${second.name}. Anything can happen.`
+        : dailyLeadMessage()
       : "The first score is on the board. Who's next?";
   }
 

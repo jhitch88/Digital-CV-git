@@ -3,6 +3,7 @@
 // Use points: 0, pending: true for missing submissions; the whole round stays provisional.
 // Replace pending scores and remove pending when submitted. At close, remove pending to confirm a zero.
 // Keep older entries: months become browsable seasons automatically, with totals reset per month.
+// Season standings rank by total points but display averages over each player's finalized scores, rounded to 5.
 // Weekly chart ranks use Monday-Sunday point totals within the selected month; daily scores stay intact.
 // The weekly tide report is available only on Sundays.
 // Weekly reports wrap only with seven dates and confirmed scores for all five players.
