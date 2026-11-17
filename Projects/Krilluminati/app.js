@@ -9,6 +9,7 @@ const PLAYERS = [
 const elements = {
   championName: document.querySelector("#champion-name"),
   championTotal: document.querySelector("#champion-total"),
+  championSeasonTotal: document.querySelector("#champion-season-total"),
   championLead: document.querySelector("#champion-lead"),
   championSubtitle: document.querySelector("#champion-subtitle"),
   standingsBody: document.querySelector("#standings-body"),
@@ -422,6 +423,7 @@ function renderChampion(standings, previousStandings, championChangedToday, days
   if (!leader || !getFinalDays(days).length) {
     elements.championName.textContent = "Nobody";
     elements.championTotal.textContent = "—";
+    elements.championSeasonTotal.textContent = "— TOTAL POINTS";
     elements.championLead.textContent = "NO SCORES YET";
     elements.championSubtitle.textContent = "The rivalry begins when the first scores arrive.";
     document.querySelector("#most-wins").innerHTML = "— <span>· no wins yet</span>";
@@ -431,6 +433,7 @@ function renderChampion(standings, previousStandings, championChangedToday, days
   }
   elements.championName.textContent = leader.name;
   elements.championTotal.textContent = formatAverage(leader);
+  elements.championSeasonTotal.textContent = `${formatNumber(leader.total)} TOTAL POINTS`;
   const newlyCrowned = championChangedToday
     && previousStandings[0]
     && leader.name !== previousStandings[0].name

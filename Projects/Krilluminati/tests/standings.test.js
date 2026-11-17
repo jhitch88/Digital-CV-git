@@ -93,6 +93,7 @@ test("season displays averages while rankings and lead gaps remain based on tota
   const standings = nodes.get("#standings-body").innerHTML;
   assert.equal(nodes.get("#champion-name").textContent, "Steven");
   assert.equal(nodes.get("#champion-total").textContent, "65");
+  assert.equal(nodes.get("#champion-season-total").textContent, "200 TOTAL POINTS");
   assert.equal(nodes.get("#champion-lead").textContent, "+50 TOTAL PTS AHEAD");
   assert.match(playerRow(standings, "Steven"), /class="points-cell">65<\/td>/);
   assert.match(playerRow(standings, "Jimmy"), /class="points-cell">150<\/td>/);
@@ -298,6 +299,7 @@ test("removing pending finalizes the round, including confirmed zeros", () => {
   assert.doesNotMatch(nodes.get("#round-detail").innerHTML, /Provisional|pending/);
   assert.equal(nodes.get("#champion-name").textContent, "Jimmy");
   assert.equal(nodes.get("#champion-total").textContent, "250");
+  assert.equal(nodes.get("#champion-season-total").textContent, "495 TOTAL POINTS");
   assert.match(nodes.get("#biggest-score").innerHTML, /Kasra.*390 pts/);
   assert.match(nodes.get("#rank-chart").innerHTML, /Nov 9/);
   assert.equal(vm.runInContext('getStandings().find(({ name }) => name === "Kasra").wins', context), 1);
@@ -460,6 +462,7 @@ test("a new month with only provisional scores does not inherit an archived crow
   ];`);
   assert.equal(nodes.get("#champion-name").textContent, "Nobody");
   assert.equal(nodes.get("#champion-total").textContent, "—");
+  assert.equal(nodes.get("#champion-season-total").textContent, "— TOTAL POINTS");
   assert.equal(nodes.get("#champion-lead").textContent, "NO SCORES YET");
   assert.doesNotMatch(nodes.get("#standings-body").innerHTML, /champion-crown/);
   assert.match(nodes.get("#biggest-score").innerHTML, /no scores yet/);
