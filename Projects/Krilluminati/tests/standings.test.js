@@ -7,10 +7,16 @@ const vm = require("node:vm");
 const projectDir = path.resolve(__dirname, "..");
 const app = fs.readFileSync(path.join(projectDir, "app.js"), "utf8");
 
-function renderPage(ledger, { reducedMotion = false } = {}) {
+function renderPage(ledger, { reducedMotion = false, today = "2026-11-15T12:00:00" } = {}) {
   const nodes = new Map();
   const timers = new Map();
   let nextTimer = 0;
+  const RealDate = Date;
+  class MockDate extends RealDate {
+    constructor(...args) {
+      super(...(args.length ? args : [today]));
+    }
+  }
   function makeNode() {
     return {
       innerHTML: "",
@@ -37,6 +43,7 @@ function renderPage(ledger, { reducedMotion = false } = {}) {
   };
   const context = vm.createContext({
     document,
+    Date: MockDate,
     window: { matchMedia: () => ({ matches: reducedMotion }) },
     Intl,
     setTimeout(callback, delay) {
@@ -49,6 +56,20 @@ function renderPage(ledger, { reducedMotion = false } = {}) {
   vm.runInContext(`${ledger}\n${app}`, context);
   return { nodes, context, timers };
 }
+
+test("weekly tide report is available only on Sundays", () => {
+  const ledger = `const scores = ${JSON.stringify(weeklyLedger())};`;
+  for (const today of ["2026-11-16T12:00:00", "2026-11-17T12:00:00", "2026-11-18T12:00:00", "2026-11-19T12:00:00", "2026-11-20T12:00:00", "2026-11-21T12:00:00"]) {
+    const { nodes, timers } = renderPage(ledger, { today });
+    assert.equal(nodes.get("#weekly").hidden, true);
+    assert.equal(nodes.get("#weekly-detail").innerHTML, "");
+    assert.equal(nodes.get("#weekly-celebration").hidden, true);
+    assert.equal(timers.size, 0);
+  }
+  const sunday = renderPage(ledger, { today: "2026-11-22T12:00:00" });
+  assert.equal(sunday.nodes.get("#weekly").hidden, false);
+  assert.match(sunday.nodes.get("#weekly-detail").innerHTML, /Week wrapped/);
+});
 
 function renderLedger(ledger) {
   return renderPage(ledger).nodes.get("#standings-body").innerHTML;

@@ -27,6 +27,7 @@ const elements = {
   chartRange: document.querySelector("#chart-range"),
   chartRangeLabel: document.querySelector("#chart-range-label"),
   chartDescription: document.querySelector("#chart-description"),
+  weeklyPanel: document.querySelector("#weekly"),
   weekSelect: document.querySelector("#week-select"),
   weeklyDetail: document.querySelector("#weekly-detail"),
   weeklyCelebration: document.querySelector("#weekly-celebration"),
@@ -288,6 +289,13 @@ function getWeekAnnouncement(review) {
 }
 
 function renderWeeklyReport(days) {
+  if (new Date().getDay() !== 0) {
+    clearTimeout(weeklyCelebrationTimeout);
+    elements.weeklyPanel.hidden = true;
+    elements.weeklyCelebration.hidden = true;
+    return;
+  }
+  elements.weeklyPanel.hidden = false;
   clearTimeout(weeklyCelebrationTimeout);
   elements.weeklyCelebration.hidden = true;
   const periods = getWeeklyPeriods(days).reverse();
