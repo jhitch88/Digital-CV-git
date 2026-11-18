@@ -289,6 +289,10 @@ body {
 }
 
 /* Featured Project Backgrounds */
+.bento-item.krilluminati .bento-content {
+    background: linear-gradient(135deg, #12364f 0%, #11665e 100%);
+}
+
 .bento-item.cluedo .bento-content {
     background: var(--cluedo-bg);
 }
@@ -322,11 +326,22 @@ body {
     border: 2px dashed var(--border);
 }
 
+.featured-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.featured-illustration {
+    font-size: clamp(3rem, 8vw, 6rem);
+    line-height: 1;
+    opacity: 0.85;
+}
+
 /* Badge */
 .bento-badge {
-    position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
     background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
     padding: 0.4rem 1rem;
