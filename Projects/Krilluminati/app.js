@@ -78,8 +78,17 @@ function celebrateRound(date) {
     elements.celebrationParticles.append(shrine);
   }
 
-  if (achievements.some(({ event }) => event === "squid")
-      && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  const squidParties = achievements.filter(({ event }) => event === "squid").length;
+  if (squidParties && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (squidParties === 2) {
+      const spotlights = document.createElement("div");
+      spotlights.className = "squid-spotlights";
+      for (let index = 0; index < 4; index += 1) {
+        spotlights.append(document.createElement("span"));
+      }
+      elements.celebrationParticles.append(spotlights);
+    }
+
     for (let index = 0; index < 28; index += 1) {
       const particle = document.createElement("span");
       particle.className = "celebration-particle squid";

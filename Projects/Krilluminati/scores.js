@@ -1,5 +1,6 @@
 // Update this ledger and upload it with the site. Optional event: "krillion" or "squid".
 // Events celebrate on the latest round at page load and when opening an older round.
+// Exactly two squid events in one round add colorful spotlights unless reduced motion is enabled.
 // Use points: 0, pending: true for missing submissions; the whole round stays provisional.
 // Replace pending scores and remove pending when submitted. At close, remove pending to confirm a zero.
 // Keep older entries: months become browsable seasons automatically, with totals reset per month.
@@ -89,5 +90,10 @@ const scores = [
   { date: "2026-11-16", player: "Chris", points: 410 },
   { date: "2026-11-16", player: "Kasra", points: 385 },
   { date: "2026-11-16", player: "Jimmy", points: 390, event: "krillion" },
-  { date: "2026-11-16", player: "Steven", points: 385 }
+  { date: "2026-11-16", player: "Steven", points: 385 },
+  { date: "2026-11-17", player: "Chris", points: 335 },
+  { date: "2026-11-17", player: "Kasra", points: 385 },
+  { date: "2026-11-17", player: "Jimmy", points: 385 },
+  { date: "2026-11-17", player: "Steven", points: 340, event: "squid" },
+  { date: "2026-11-17", player: "Brady", points: 395, event: "squid" }
 ];

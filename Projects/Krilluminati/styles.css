@@ -309,6 +309,35 @@ h1, h2, p { margin-top: 0; }
   animation-fill-mode: both;
 }
 .celebration-particle.squid { bottom: -40px; font-size: 27px; animation-name: squid-rise; }
+.squid-spotlights {
+  position: absolute;
+  inset: 0;
+  animation: squid-spotlight-fade 4.5s ease-in-out both;
+}
+.squid-spotlights span {
+  position: absolute;
+  bottom: 0;
+  left: var(--source);
+  width: 42vmax;
+  height: 128vmax;
+  background: linear-gradient(to top, var(--beam-color), transparent);
+  clip-path: polygon(0 0, 100% 0, 51% 100%, 49% 100%);
+  transform-origin: 50% 100%;
+  animation: squid-spotlight-sweep var(--sweep-time) ease-in-out infinite alternate;
+  animation-delay: var(--sweep-offset);
+}
+.squid-spotlights span:nth-child(1) { --source: calc(12% - 21vmax); --beam-color: #ef58da; --sweep-time: 2s; --sweep-offset: -.4s; }
+.squid-spotlights span:nth-child(2) { --source: calc(37% - 21vmax); --beam-color: #4abaff; --sweep-time: 2.4s; --sweep-offset: -2s; }
+.squid-spotlights span:nth-child(3) { --source: calc(63% - 21vmax); --beam-color: #71ed9a; --sweep-time: 1.8s; --sweep-offset: -.9s; }
+.squid-spotlights span:nth-child(4) { --source: calc(88% - 21vmax); --beam-color: #ffc661; --sweep-time: 2.2s; --sweep-offset: -1.7s; }
+@keyframes squid-spotlight-fade {
+  0%, 100% { opacity: 0; }
+  15%, 78% { opacity: .46; }
+}
+@keyframes squid-spotlight-sweep {
+  from { transform: rotate(-42deg); }
+  to { transform: rotate(42deg); }
+}
 .krillion-shrine {
   position: absolute;
   top: 45%;
@@ -444,7 +473,7 @@ h1, h2, p { margin-top: 0; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
-  .celebration-particle { display: none; }
+  .celebration-particle, .squid-spotlights { display: none; }
   .celebration-card, .weekly-wrap-celebration { animation: none; }
   .krillion-shrine, .krillion-rays, .krillion-halo, .krillion-shrimp, .krillion-sparkle { animation: none; }
 }

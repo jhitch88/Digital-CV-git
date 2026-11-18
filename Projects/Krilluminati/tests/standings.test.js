@@ -156,6 +156,32 @@ test("mixed celebrations retain squid particles and one shrine, with a still shr
   }
 });
 
+test("exactly two squid parties add spotlights without replacing particles or announcements", () => {
+  for (const [count, reducedMotion] of [[1, false], [2, false], [3, false], [2, true]]) {
+    const entries = ["Brady", "Steven", "Chris"].slice(0, count).map((player) => ({
+      date: "2026-11-17", player, points: 350, event: "squid"
+    }));
+    const { nodes, context, timers } = renderPage(`const scores = ${JSON.stringify(entries)};`, { reducedMotion });
+    const particles = nodes.get("#celebration-particles");
+    const announcements = nodes.get("#celebration-announcements");
+    const spotlights = () => particles.children.filter(({ className }) => className === "squid-spotlights");
+    const showSpotlights = count === 2 && !reducedMotion;
+    assert.equal(spotlights().length, showSpotlights ? 1 : 0);
+    assert.equal(particles.children.filter(({ className }) => className === "celebration-particle squid").length, reducedMotion ? 0 : 28);
+    assert.equal(announcements.children.length, count);
+    if (showSpotlights) {
+      assert.equal(spotlights()[0].children.length, 4);
+      [...timers.values()][0].callback();
+      assert.equal(particles.children.length, 0);
+      assert.equal(announcements.children.length, 0);
+      vm.runInContext('celebrateRound("2026-11-17");', context);
+      assert.equal(spotlights().length, 1);
+      vm.runInContext('celebrateRound("2026-11-16");', context);
+      assert.equal(spotlights().length, 0);
+    }
+  }
+});
+
 test("latest round shows season rank movement from the prior round", () => {
   const html = renderLedger(`const scores = [
     { date: "2026-11-05", player: "Steven", points: 1820 },
