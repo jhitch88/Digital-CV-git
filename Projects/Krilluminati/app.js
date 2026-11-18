@@ -53,18 +53,28 @@ function celebrateRound(date) {
   const achievements = getDayScores(date).filter(({ event }) => event);
   if (!achievements.length) return;
 
-  for (const { player, event } of achievements) {
-    const announcement = document.createElement("div");
-    announcement.className = `celebration-card ${event}`;
-    const title = document.createElement("strong");
-    title.textContent = event === "squid" ? "🦑 SQUID PARTY!" : "🦐 ONE IN A KRILLION!";
-    const detail = document.createElement("span");
-    detail.textContent = `${player} · ${formatDate(date)} · ${event === "squid" ? "A quorum of squids. Let the party begin!" : "A Krillion pick. Legendary catch!"}`;
-    announcement.append(title, detail);
-    elements.celebrationAnnouncements.append(announcement);
+  const squidPlayers = achievements.filter(({ event }) => event === "squid").map(({ player }) => player);
+  const krillionPlayers = achievements.filter(({ event }) => event === "krillion").map(({ player }) => player);
+  const announcement = document.createElement("div");
+  announcement.className = squidPlayers.length ? "celebration-card squid" : "celebration-card krillion";
+  const title = document.createElement("strong");
+  const detail = document.createElement("span");
+  if (achievements.length === 1) {
+    title.textContent = squidPlayers.length ? "🦑 SQUID PARTY!" : "🦐 ONE IN A KRILLION!";
+    detail.textContent = `${achievements[0].player} · ${formatDate(date)} · ${squidPlayers.length ? "A quorum of squids. Let the party begin!" : "A Krillion pick. Legendary catch!"}`;
+  } else {
+    const names = new Intl.ListFormat("en-US");
+    const mixed = squidPlayers.length && krillionPlayers.length;
+    title.textContent = mixed ? "🦑🦐 ROUND CELEBRATION!" : squidPlayers.length ? "🦑 SQUID PARTIES!" : "🦐 KRILLION CATCHES!";
+    const messages = [];
+    if (squidPlayers.length) messages.push(`${mixed ? "Squid party: " : ""}${names.format(squidPlayers)}`);
+    if (krillionPlayers.length) messages.push(`${mixed ? "Krillion: " : ""}${names.format(krillionPlayers)}`);
+    detail.textContent = `${messages.join(" · ")} · ${formatDate(date)}`;
   }
+  announcement.append(title, detail);
+  elements.celebrationAnnouncements.append(announcement);
 
-  if (achievements.some(({ event }) => event === "krillion")) {
+  if (krillionPlayers.length) {
     const shrine = document.createElement("div");
     shrine.className = "krillion-shrine";
     shrine.innerHTML = `
@@ -78,7 +88,7 @@ function celebrateRound(date) {
     elements.celebrationParticles.append(shrine);
   }
 
-  const squidParties = achievements.filter(({ event }) => event === "squid").length;
+  const squidParties = squidPlayers.length;
   if (squidParties && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     if (squidParties === 2) {
       const spotlights = document.createElement("div");

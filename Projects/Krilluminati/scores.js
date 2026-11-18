@@ -1,5 +1,6 @@
 // Update this ledger and upload it with the site. Optional event: "krillion" or "squid".
 // Events celebrate on the latest round at page load and when opening an older round.
+// Events from the same round share one pop-up, with players grouped by event type.
 // Exactly two squid events in one round add colorful spotlights unless reduced motion is enabled.
 // Use points: 0, pending: true for missing submissions; the whole round stays provisional.
 // Replace pending scores and remove pending when submitted. At close, remove pending to confirm a zero.

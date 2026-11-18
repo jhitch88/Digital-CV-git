@@ -152,7 +152,10 @@ test("mixed celebrations retain squid particles and one shrine, with a still shr
     const particles = nodes.get("#celebration-particles").children;
     assert.equal(particles.filter((node) => node.className === "krillion-shrine").length, 1);
     assert.equal(particles.filter((node) => node.className === "celebration-particle squid").length, reducedMotion ? 0 : 28);
-    assert.equal(nodes.get("#celebration-announcements").children.length, 3);
+    const cards = nodes.get("#celebration-announcements").children;
+    assert.equal(cards.length, 1);
+    assert.match(cards[0].children[0].textContent, /ROUND CELEBRATION/);
+    assert.match(cards[0].children[1].textContent, /Squid party: Chris · Krillion: Jimmy and Steven · Nov 1/);
   }
 });
 
@@ -168,7 +171,11 @@ test("exactly two squid parties add spotlights without replacing particles or an
     const showSpotlights = count === 2 && !reducedMotion;
     assert.equal(spotlights().length, showSpotlights ? 1 : 0);
     assert.equal(particles.children.filter(({ className }) => className === "celebration-particle squid").length, reducedMotion ? 0 : 28);
-    assert.equal(announcements.children.length, count);
+    assert.equal(announcements.children.length, 1);
+    if (count === 2) {
+      assert.match(announcements.children[0].children[0].textContent, /SQUID PARTIES/);
+      assert.match(announcements.children[0].children[1].textContent, /Steven and Brady · Nov 17/);
+    }
     if (showSpotlights) {
       assert.equal(spotlights()[0].children.length, 4);
       [...timers.values()][0].callback();
