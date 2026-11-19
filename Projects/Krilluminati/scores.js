@@ -96,5 +96,10 @@ const scores = [
   { date: "2026-11-17", player: "Kasra", points: 385 },
   { date: "2026-11-17", player: "Jimmy", points: 385 },
   { date: "2026-11-17", player: "Steven", points: 340, event: "squid" },
-  { date: "2026-11-17", player: "Brady", points: 395, event: "squid" }
+  { date: "2026-11-17", player: "Brady", points: 395, event: "squid" },
+  { date: "2026-11-18", player: "Chris", points: 350 },
+  { date: "2026-11-18", player: "Steven", points: 300 },
+  { date: "2026-11-18", player: "Brady", points: 255 },
+  { date: "2026-11-18", player: "Kasra", points: 230 },
+  { date: "2026-11-18", player: "Jimmy", points: 320 }
 ];
