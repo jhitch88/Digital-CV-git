@@ -101,10 +101,15 @@ const scores = [
   { date: "2026-11-18", player: "Steven", points: 300 },
   { date: "2026-11-18", player: "Brady", points: 255 },
   { date: "2026-11-18", player: "Kasra", points: 230 },
-   { date: "2026-11-18", player: "Jimmy", points: 320 },
-   { date: "2026-11-19", player: "Chris", points: 325 },
-   { date: "2026-11-19", player: "Steven", points: 410 },
-   { date: "2026-11-19", player: "Jimmy", points: 355 },
-   { date: "2026-11-19", player: "Brady", points: 390, event: "squid" },
-   { date: "2026-11-19", player: "Kasra", points: 390 }
+  { date: "2026-11-18", player: "Jimmy", points: 320 },
+  { date: "2026-11-19", player: "Chris", points: 325 },
+  { date: "2026-11-19", player: "Steven", points: 410 },
+  { date: "2026-11-19", player: "Jimmy", points: 355 },
+  { date: "2026-11-19", player: "Brady", points: 390, event: "squid" },
+  { date: "2026-11-19", player: "Kasra", points: 390 },
+  { date: "2026-11-20", player: "Chris", points: 335 },
+  { date: "2026-11-20", player: "Jimmy", points: 355 },
+  { date: "2026-11-20", player: "Brady", points: 360, event: "squid" },
+  { date: "2026-11-20", player: "Kasra", points: 295 },
+  { date: "2026-11-20", player: "Steven", points: 410 }
 ];
