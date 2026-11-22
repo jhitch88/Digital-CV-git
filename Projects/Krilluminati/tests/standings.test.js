@@ -189,6 +189,42 @@ test("exactly two squid parties add spotlights without replacing particles or an
   }
 });
 
+test("November 21 celebrates Briles alongside the two squid parties in one card and the round recap", () => {
+  const ledger = fs.readFileSync(path.join(projectDir, "scores.js"), "utf8");
+  for (const reducedMotion of [false, true]) {
+    const { nodes, context } = renderPage(ledger, { reducedMotion, today: "2026-11-21T12:00:00" });
+    const entries = JSON.parse(vm.runInContext('JSON.stringify(getDayScores("2026-11-21"))', context));
+    assert.deepEqual(entries.map(({ player, points, event }) => [player, points, event || null]), [
+      ["Jimmy", 415, "squid"], ["Steven", 340, "squid"], ["Kasra", 335, null],
+      ["Brady", 305, null], ["Chris", 245, null]
+    ]);
+    const cards = nodes.get("#celebration-announcements").children;
+    assert.equal(cards.length, 1);
+    assert.match(cards[0].children[0].textContent, /SQUID PARTIES/);
+    assert.match(cards[0].children[1].textContent, /Jimmy and Steven · Nov 21/);
+    assert.match(cards[0].children[2].textContent, /Briles.*Brady and family/);
+    assert.equal(nodes.get("#celebration-particles").children.filter(({ className }) => className === "squid-spotlights").length, reducedMotion ? 0 : 1);
+    assert.match(nodes.get("#round-detail").innerHTML, /Briles.*Brady and family/);
+    vm.runInContext('renderRoundDetail("2026-11-20"); celebrateRound("2026-11-20");', context);
+    assert.doesNotMatch(nodes.get("#round-detail").innerHTML, /Briles/);
+    assert.equal(nodes.get("#celebration-announcements").children[0].children.length, 2);
+    vm.runInContext('renderRoundDetail("2026-11-21"); celebrateRound("2026-11-21");', context);
+    assert.match(nodes.get("#round-detail").innerHTML, /Briles/);
+    assert.equal(nodes.get("#celebration-announcements").children.length, 1);
+  }
+});
+
+test("the November 21 milestone can celebrate without a game event", () => {
+  const { nodes, context } = renderPage(`const scores = [
+    { date: "2026-11-21", player: "Brady", points: 305 }
+  ];`);
+  const card = nodes.get("#celebration-announcements").children[0];
+  assert.match(card.children[0].textContent, /SPECIAL CELEBRATION/);
+  assert.match(card.children[2].textContent, /Briles/);
+  vm.runInContext('celebrateRound("2026-11-22")', context);
+  assert.equal(nodes.get("#celebration-announcements").children.length, 0);
+});
+
 test("latest round shows season rank movement from the prior round", () => {
   const html = renderLedger(`const scores = [
     { date: "2026-11-05", player: "Steven", points: 1820 },

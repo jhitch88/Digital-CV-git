@@ -6,6 +6,10 @@ const PLAYERS = [
   { name: "Brady", color: "#9b79a5", tint: "#eee5f0" }
 ];
 
+const ROUND_NOTES = {
+  "2026-11-21": "Welcome to the crew, Briles! Congratulations to Brady and family on his son's arrival! 🦐💙"
+};
+
 const elements = {
   championName: document.querySelector("#champion-name"),
   championTotal: document.querySelector("#champion-total"),
@@ -50,8 +54,10 @@ function celebrateRound(date) {
   clearTimeout(celebrationTimeout);
   elements.celebrationParticles.replaceChildren();
   elements.celebrationAnnouncements.replaceChildren();
-  const achievements = getDayScores(date).filter(({ event }) => event);
-  if (!achievements.length) return;
+  const dayScores = getDayScores(date);
+  const achievements = dayScores.filter(({ event }) => event);
+  const note = dayScores.length ? ROUND_NOTES[date] : "";
+  if (!achievements.length && !note) return;
 
   const squidPlayers = achievements.filter(({ event }) => event === "squid").map(({ player }) => player);
   const krillionPlayers = achievements.filter(({ event }) => event === "krillion").map(({ player }) => player);
@@ -59,7 +65,10 @@ function celebrateRound(date) {
   announcement.className = squidPlayers.length ? "celebration-card squid" : "celebration-card krillion";
   const title = document.createElement("strong");
   const detail = document.createElement("span");
-  if (achievements.length === 1) {
+  if (!achievements.length) {
+    title.textContent = "🎉 A SPECIAL CELEBRATION!";
+    detail.textContent = formatDate(date);
+  } else if (achievements.length === 1) {
     title.textContent = squidPlayers.length ? "🦑 SQUID PARTY!" : "🦐 ONE IN A KRILLION!";
     detail.textContent = `${achievements[0].player} · ${formatDate(date)} · ${squidPlayers.length ? "A quorum of squids. Let the party begin!" : "A Krillion pick. Legendary catch!"}`;
   } else {
@@ -72,6 +81,11 @@ function celebrateRound(date) {
     detail.textContent = `${messages.join(" · ")} · ${formatDate(date)}`;
   }
   announcement.append(title, detail);
+  if (note) {
+    const milestone = document.createElement("span");
+    milestone.textContent = note;
+    announcement.append(milestone);
+  }
   elements.celebrationAnnouncements.append(announcement);
 
   if (krillionPlayers.length) {
@@ -577,7 +591,8 @@ function renderRoundDetail(date) {
         <div class="round-result-top"><span class="round-result-name">${entry.player}</span><span class="round-result-rank">${entry.pending ? "" : String(rankFor(dayScores, index)).padStart(2, "0")}</span></div>
         <strong class="round-result-points">${formatNumber(entry.points)} <small>${entry.pending ? "pts (pending)" : "pts"}</small></strong>
         ${entry.event ? `<div class="round-event-player ${eventType(entry.event)}">${eventLabel(entry.event)}</div>` : ""}
-      </article>`).join("")}</div>`;
+      </article>`).join("")}</div>
+    ${dayScores.length && ROUND_NOTES[date] ? `<p class="round-note">${ROUND_NOTES[date]}</p>` : ""}`;
 }
 
 function render() {

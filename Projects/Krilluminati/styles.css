@@ -269,6 +269,7 @@ h1, h2, p { margin-top: 0; }
 .round-result-points { display: block; margin-top: 7px; font: 500 12px var(--mono); }
 .round-event-player { margin-top: 5px; color: var(--orange-dark); font-size: 8px; }
 .round-event-player.squid { color: #42644b; }
+.round-note { margin: 12px 0 0; padding: 12px 14px; border-radius: 6px; background: #f8e9df; color: var(--navy); font-size: 11px; line-height: 1.5; }
 
 .round-empty { color: var(--muted); font-size: 11px; margin: 18px 0 0; }
 
