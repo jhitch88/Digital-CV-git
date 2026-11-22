@@ -71,6 +71,26 @@ test("weekly tide report is available only on Sundays", () => {
   assert.match(sunday.nodes.get("#weekly-detail").innerHTML, /Week wrapped/);
 });
 
+test("published November 22 scores complete the Sunday weekly report", () => {
+  const ledger = fs.readFileSync(path.join(projectDir, "scores.js"), "utf8");
+  const sunday = renderPage(ledger, { today: "2026-11-22T12:00:00" });
+  const entries = JSON.parse(vm.runInContext('JSON.stringify(getDayScores("2026-11-22"))', sunday.context));
+  assert.deepEqual(entries.map(({ player, points }) => [player, points]), [
+    ["Steven", 390], ["Brady", 285], ["Jimmy", 250], ["Kasra", 250], ["Chris", 210]
+  ]);
+  const detail = sunday.nodes.get("#weekly-detail").innerHTML;
+  assert.equal(sunday.nodes.get("#weekly").hidden, false);
+  assert.equal(sunday.nodes.get("#week-select").value, "2026-11-16");
+  assert.match(detail, /Week wrapped/);
+  assert.match(detail, /7 of 7 rounds complete/);
+  assert.match(detail, /Steven wins the week by 105 points/);
+  assert.match(detail, /Steven<\/strong><span>2,575 pts/);
+  assert.match(detail, /Jimmy<\/strong><span>2,470 pts/);
+  assert.match(detail, /Brady<\/strong><span>2,290 pts/);
+  const monday = renderPage(ledger, { today: "2026-11-23T12:00:00" });
+  assert.equal(monday.nodes.get("#weekly").hidden, true);
+});
+
 function renderLedger(ledger) {
   return renderPage(ledger).nodes.get("#standings-body").innerHTML;
 }
@@ -193,6 +213,7 @@ test("November 21 celebrates Briles alongside the two squid parties in one card 
   const ledger = fs.readFileSync(path.join(projectDir, "scores.js"), "utf8");
   for (const reducedMotion of [false, true]) {
     const { nodes, context } = renderPage(ledger, { reducedMotion, today: "2026-11-21T12:00:00" });
+    vm.runInContext('selectedDate = "2026-11-21"; renderRounds(getSeasonDays());', context);
     const entries = JSON.parse(vm.runInContext('JSON.stringify(getDayScores("2026-11-21"))', context));
     assert.deepEqual(entries.map(({ player, points, event }) => [player, points, event || null]), [
       ["Jimmy", 415, "squid"], ["Steven", 340, "squid"], ["Kasra", 335, null],
