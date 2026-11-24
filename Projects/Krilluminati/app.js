@@ -61,6 +61,7 @@ function celebrateRound(date) {
 
   const squidPlayers = achievements.filter(({ event }) => event === "squid").map(({ player }) => player);
   const krillionPlayers = achievements.filter(({ event }) => event === "krillion").map(({ player }) => player);
+  const sixSquidPlayers = achievements.filter(({ event, squidCount }) => event === "squid" && squidCount === 6).map(({ player }) => player);
   const announcement = document.createElement("div");
   announcement.className = squidPlayers.length ? "celebration-card squid" : "celebration-card krillion";
   const title = document.createElement("strong");
@@ -81,6 +82,11 @@ function celebrateRound(date) {
     detail.textContent = `${messages.join(" · ")} · ${formatDate(date)}`;
   }
   announcement.append(title, detail);
+  if (sixSquidPlayers.length) {
+    const nearPerfect = document.createElement("span");
+    nearPerfect.textContent = `${new Intl.ListFormat("en-US").format(sixSquidPlayers)}: 6 of 7 squids! One away from a perfect party.`;
+    announcement.append(nearPerfect);
+  }
   if (note) {
     const milestone = document.createElement("span");
     milestone.textContent = note;
@@ -113,7 +119,8 @@ function celebrateRound(date) {
       elements.celebrationParticles.append(spotlights);
     }
 
-    for (let index = 0; index < 28; index += 1) {
+    const particleCount = sixSquidPlayers.length ? 42 : 28;
+    for (let index = 0; index < particleCount; index += 1) {
       const particle = document.createElement("span");
       particle.className = "celebration-particle squid";
       particle.textContent = "🦑";
@@ -142,6 +149,7 @@ function isValidEntry(entry) {
     && entry.points >= 0
     && (entry.pending === undefined || typeof entry.pending === "boolean")
     && (!entry.pending || (entry.points === 0 && !entry.event))
+    && (entry.squidCount === undefined || (entry.event === "squid" && Number.isInteger(entry.squidCount) && entry.squidCount >= 5 && entry.squidCount <= 7))
     && ["", "krillion", "squid"].includes(entry.event || "");
 }
 
@@ -578,19 +586,19 @@ function renderRoundDetail(date) {
   const provisional = isProvisional(date);
   const submittedCount = dayScores.filter(({ pending }) => !pending).length;
   const events = dayScores.filter(({ event }) => event);
-  const eventLabel = (event) => event === "krillion" ? "🦐 KRILLION! MAX SCORE!" : "🦑 SQUID PARTY!";
+  const eventLabel = (entry) => entry.event === "krillion" ? "🦐 KRILLION! MAX SCORE!" : `🦑 SQUID PARTY!${entry.squidCount ? ` ${entry.squidCount}/7 SQUIDS` : ""}`;
   const eventType = (event) => event === "squid" ? "squid" : "";
   elements.roundDetail.innerHTML = `
     <div class="round-summary">
       <span class="round-date-mark">${dateParts[2]}</span>
       <div><strong>${formatDate(date, { weekday: "long", month: "long", day: "numeric" })}</strong><small>${provisional ? `Provisional: ${submittedCount} of ${PLAYERS.length} submitted. Not counted in standings, wins or the chart yet.` : dayScores.length ? `${dayScores.length} ${dayScores.length === 1 ? "score" : "scores"} on the board` : "No scores logged for this day yet"}</small></div>
-      ${events.map(({ event, player }) => `<span class="round-event ${eventType(event)}">${eventLabel(event)} · ${player}</span>`).join("")}
+      ${events.map((entry) => `<span class="round-event ${eventType(entry.event)}">${eventLabel(entry)} · ${entry.player}</span>`).join("")}
     </div>
     <div class="round-results">${dayScores.map((entry, index) => `
       <article class="round-result">
         <div class="round-result-top"><span class="round-result-name">${entry.player}</span><span class="round-result-rank">${entry.pending ? "" : String(rankFor(dayScores, index)).padStart(2, "0")}</span></div>
         <strong class="round-result-points">${formatNumber(entry.points)} <small>${entry.pending ? "pts (pending)" : "pts"}</small></strong>
-        ${entry.event ? `<div class="round-event-player ${eventType(entry.event)}">${eventLabel(entry.event)}</div>` : ""}
+        ${entry.event ? `<div class="round-event-player ${eventType(entry.event)}">${eventLabel(entry)}</div>` : ""}
       </article>`).join("")}</div>
     ${dayScores.length && ROUND_NOTES[date] ? `<p class="round-note">${ROUND_NOTES[date]}</p>` : ""}`;
 }

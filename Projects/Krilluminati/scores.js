@@ -2,6 +2,7 @@
 // Events celebrate on the latest round at page load and when opening an older round.
 // Events from the same round share one pop-up, with players grouped by event type.
 // Exactly two squid events in one round add colorful spotlights unless reduced motion is enabled.
+// For a squid event, optionally record squidCount: 5, 6, or 7; six adds extra squid particles.
 // Special round notes are stored by date in ROUND_NOTES in app.js.
 // Use points: 0, pending: true for missing submissions; the whole round stays provisional.
 // Replace pending scores and remove pending when submitted. At close, remove pending to confirm a zero.
@@ -122,5 +123,10 @@ const scores = [
   { date: "2026-11-22", player: "Jimmy", points: 250 },
   { date: "2026-11-22", player: "Steven", points: 390 },
   { date: "2026-11-22", player: "Chris", points: 210 },
-  { date: "2026-11-22", player: "Kasra", points: 250 }
+  { date: "2026-11-22", player: "Kasra", points: 250 },
+  { date: "2026-11-23", player: "Chris", points: 170 },
+  { date: "2026-11-23", player: "Kasra", points: 250 },
+  { date: "2026-11-23", player: "Jimmy", points: 330, event: "squid" },
+  { date: "2026-11-23", player: "Brady", points: 200 },
+  { date: "2026-11-23", player: "Steven", points: 445, event: "squid", squidCount: 6 }
 ];

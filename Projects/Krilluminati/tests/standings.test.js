@@ -73,7 +73,7 @@ test("weekly tide report is available only on Sundays", () => {
 
 test("published November 22 scores complete the Sunday weekly report", () => {
   const ledger = fs.readFileSync(path.join(projectDir, "scores.js"), "utf8");
-  const sunday = renderPage(ledger, { today: "2026-11-22T12:00:00" });
+  const sunday = renderPage(`${ledger}\nscores.splice(0, scores.length, ...scores.filter(({ date }) => date <= "2026-11-22"));`, { today: "2026-11-22T12:00:00" });
   const entries = JSON.parse(vm.runInContext('JSON.stringify(getDayScores("2026-11-22"))', sunday.context));
   assert.deepEqual(entries.map(({ player, points }) => [player, points]), [
     ["Steven", 390], ["Brady", 285], ["Jimmy", 250], ["Kasra", 250], ["Chris", 210]
@@ -206,6 +206,42 @@ test("exactly two squid parties add spotlights without replacing particles or an
       vm.runInContext('celebrateRound("2026-11-16");', context);
       assert.equal(spotlights().length, 0);
     }
+  }
+});
+
+test("six squids add a modest deluge and a shout-out alongside the double party", () => {
+  const ledger = fs.readFileSync(path.join(projectDir, "scores.js"), "utf8");
+  for (const reducedMotion of [false, true]) {
+    const { nodes, context, timers } = renderPage(ledger, { reducedMotion, today: "2026-11-23T12:00:00" });
+    const entries = JSON.parse(vm.runInContext('JSON.stringify(getDayScores("2026-11-23"))', context));
+    assert.deepEqual(entries.map(({ player, points, event, squidCount }) => [player, points, event || null, squidCount || null]), [
+      ["Steven", 445, "squid", 6], ["Jimmy", 330, "squid", null], ["Kasra", 250, null, null],
+      ["Brady", 200, null, null], ["Chris", 170, null, null]
+    ]);
+    const particles = nodes.get("#celebration-particles");
+    const cards = nodes.get("#celebration-announcements").children;
+    assert.equal(cards.length, 1);
+    assert.match(cards[0].children[1].textContent, /Steven and Jimmy · Nov 23/);
+    assert.match(cards[0].children[2].textContent, /Steven: 6 of 7 squids/);
+    assert.match(nodes.get("#round-detail").innerHTML, /6\/7 SQUIDS/);
+    assert.equal(particles.children.filter(({ className }) => className === "celebration-particle squid").length, reducedMotion ? 0 : 42);
+    assert.equal(particles.children.filter(({ className }) => className === "squid-spotlights").length, reducedMotion ? 0 : 1);
+    [...timers.values()][0].callback();
+    assert.equal(particles.children.length, 0);
+    vm.runInContext('celebrateRound("2026-11-23"); celebrateRound("2026-11-21")', context);
+    assert.equal(particles.children.filter(({ className }) => className === "celebration-particle squid").length, reducedMotion ? 0 : 28);
+  }
+});
+
+test("squid counts must describe a squid party and be between five and seven", () => {
+  for (const [event, squidCount] of [["squid", 4], ["squid", 8], ["squid", 6.5], ["squid", "6"], ["krillion", 6], [undefined, 6]]) {
+    const entry = { date: "2026-11-23", player: "Steven", points: 445, event, squidCount };
+    assert.throws(() => renderPage(`const scores = ${JSON.stringify([entry])};`), /ledger could not be loaded/);
+  }
+  for (const squidCount of [5, 7]) {
+    const entry = { date: "2026-11-23", player: "Steven", points: 445, event: "squid", squidCount };
+    const { nodes } = renderPage(`const scores = ${JSON.stringify([entry])};`);
+    assert.equal(nodes.get("#celebration-particles").children.length, 28);
   }
 });
 
