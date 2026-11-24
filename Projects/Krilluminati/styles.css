@@ -317,7 +317,7 @@ h1, h2, p { margin-top: 0; }
 }
 .squid-spotlights span {
   position: absolute;
-  bottom: 0;
+  bottom: -1vmax;
   left: var(--source);
   width: 42vmax;
   height: 128vmax;
