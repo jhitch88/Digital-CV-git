@@ -213,6 +213,7 @@ test("six squids add a modest deluge and a shout-out alongside the double party"
   const ledger = fs.readFileSync(path.join(projectDir, "scores.js"), "utf8");
   for (const reducedMotion of [false, true]) {
     const { nodes, context, timers } = renderPage(ledger, { reducedMotion, today: "2026-11-23T12:00:00" });
+    vm.runInContext('selectedDate = "2026-11-23"; renderRounds(getSeasonDays());', context);
     const entries = JSON.parse(vm.runInContext('JSON.stringify(getDayScores("2026-11-23"))', context));
     assert.deepEqual(entries.map(({ player, points, event, squidCount }) => [player, points, event || null, squidCount || null]), [
       ["Steven", 445, "squid", 6], ["Jimmy", 330, "squid", null], ["Kasra", 250, null, null],
