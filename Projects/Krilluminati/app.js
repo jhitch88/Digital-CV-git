@@ -586,6 +586,7 @@ function renderRoundDetail(date) {
   const provisional = isProvisional(date);
   const submittedCount = dayScores.filter(({ pending }) => !pending).length;
   const events = dayScores.filter(({ event }) => event);
+  const chrisRetired = date === "2026-11-25" && dayScores.some(({ player, pending }) => player === "Chris" && pending);
   const eventLabel = (entry) => entry.event === "krillion" ? "🦐 KRILLION! MAX SCORE!" : `🦑 SQUID PARTY!${entry.squidCount ? ` ${entry.squidCount}/7 SQUIDS` : ""}`;
   const eventType = (event) => event === "squid" ? "squid" : "";
   elements.roundDetail.innerHTML = `
@@ -600,7 +601,8 @@ function renderRoundDetail(date) {
         <strong class="round-result-points">${formatNumber(entry.points)} <small>${entry.pending ? "pts (pending)" : "pts"}</small></strong>
         ${entry.event ? `<div class="round-event-player ${eventType(entry.event)}">${eventLabel(entry)}</div>` : ""}
       </article>`).join("")}</div>
-    ${dayScores.length && ROUND_NOTES[date] ? `<p class="round-note">${ROUND_NOTES[date]}</p>` : ""}`;
+    ${dayScores.length && ROUND_NOTES[date] ? `<p class="round-note">${ROUND_NOTES[date]}</p>` : ""}
+    ${chrisRetired ? `<p class="round-note">Chris said "hell no" and rage-quit Krillion. The shrimp would like to know if he needs a minute. 🦐</p>` : ""}`;
 }
 
 function render() {

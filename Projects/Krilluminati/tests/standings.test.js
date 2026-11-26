@@ -412,6 +412,24 @@ test("pending zeros display provisionally without changing official results", ()
   assert.equal(nodes.get("#rank-chart").innerHTML, baseline.nodes.get("#rank-chart").innerHTML);
 });
 
+test("November 25 stays provisional and Chris's playful note disappears when his score is resolved", () => {
+  const ledger = fs.readFileSync(path.join(projectDir, "scores.js"), "utf8");
+  const { nodes, context } = renderPage(ledger, { today: "2026-11-25T12:00:00" });
+  const entries = JSON.parse(vm.runInContext('JSON.stringify(getDayScores("2026-11-25"))', context));
+  assert.deepEqual(entries.map(({ player, points, pending }) => [player, points, !!pending]), [
+    ["Jimmy", 305, false], ["Kasra", 290, false], ["Brady", 250, false],
+    ["Steven", 210, false], ["Chris", 0, true]
+  ]);
+  assert.match(nodes.get("#round-detail").innerHTML, /Provisional: 4 of 5 submitted/);
+  assert.match(nodes.get("#round-detail").innerHTML, /Chris said "hell no" and rage-quit Krillion/);
+  const standings = vm.runInContext('JSON.stringify(getStandings())', context);
+  assert.equal(standings, vm.runInContext('JSON.stringify(getStandings(getDays().filter(date => date !== "2026-11-25")))', context));
+  vm.runInContext('renderRoundDetail("2026-11-24")', context);
+  assert.doesNotMatch(nodes.get("#round-detail").innerHTML, /rage-quit Krillion/);
+  vm.runInContext('scores.find(entry => entry.date === "2026-11-25" && entry.player === "Chris").pending = false; renderRoundDetail("2026-11-25")', context);
+  assert.doesNotMatch(nodes.get("#round-detail").innerHTML, /rage-quit Krillion|Provisional/);
+});
+
 test("round stays provisional until the last pending entry is resolved", () => {
   const { nodes } = renderPage(partialLedger.replace(
     'player: "Chris", points: 0, pending: true',
