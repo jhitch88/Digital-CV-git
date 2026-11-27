@@ -27,6 +27,10 @@ const elements = {
   seasonSelect: document.querySelector("#season-select"),
   seasonStampLabel: document.querySelector("#season-stamp-label"),
   seasonDescription: document.querySelector("#season-description"),
+  brandShrimp: document.querySelector("#brand-shrimp"),
+  brandKrilgrim: document.querySelector("#brand-krilgrim"),
+  krillsgiving: document.querySelector("#krillsgiving"),
+  krillsgivingWinner: document.querySelector("#krillsgiving-winner"),
   crownLabel: document.querySelector("#crown-label"),
   chartView: document.querySelector("#chart-view"),
   chartRange: document.querySelector("#chart-range"),
@@ -576,6 +580,22 @@ function renderRounds(days) {
   celebrateRound(selectedDate);
 }
 
+function renderKrillsgiving() {
+  const today = new Date();
+  const holiday = today.getFullYear() === 2026 && today.getMonth() === 10 && today.getDate() === 26;
+  elements.brandShrimp.hidden = holiday;
+  elements.brandKrilgrim.hidden = !holiday;
+  elements.krillsgiving.hidden = !holiday || selectedMonth !== "2026-11";
+  if (elements.krillsgiving.hidden) return;
+  const dayScores = getDayScores("2026-11-26");
+  if (!dayScores.length || isProvisional("2026-11-26")) {
+    elements.krillsgivingWinner.textContent = "Head of the Table: awaiting finalized scores";
+    return;
+  }
+  const winners = dayScores.filter(({ points }) => points === dayScores[0].points).map(({ player }) => player);
+  elements.krillsgivingWinner.textContent = `Head${winners.length > 1 ? "s" : ""} of the Table: ${new Intl.ListFormat("en-US").format(winners)} · ${formatNumber(dayScores[0].points)} pts`;
+}
+
 function renderRoundDetail(date) {
   const dayScores = getDayScores(date);
   if (!date) {
@@ -617,6 +637,7 @@ function render() {
   elements.seasonStampLabel.textContent = archived ? "ARCHIVED SEASON" : "CURRENT SEASON";
   elements.crownLabel.textContent = archived ? "THIS MONTH'S CROWN" : "CURRENTLY WEARING THE CROWN";
   elements.seasonDescription.textContent = `${archived ? "Viewing an archived month. " : ""}Each month is a fresh season. Previous months stay available here.`;
+  renderKrillsgiving();
   const days = getSeasonDays();
   const finalDays = getFinalDays(days);
   const standings = getStandings(days);

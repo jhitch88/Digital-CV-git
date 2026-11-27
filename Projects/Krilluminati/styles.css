@@ -56,6 +56,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 }
 
 .brand-mark { font-size: 23px; transform: rotate(-17deg); }
+.brand-mascot { width: 35px; height: auto; }
 .brand-period, .heading-dot { color: var(--orange); }
 .top-nav { display: flex; gap: 37px; margin-left: 46px; }
 .top-nav a {
@@ -110,6 +111,15 @@ h1, h2, p { margin-top: 0; }
 .stamp-label { margin-top: 6px; text-align: center; font: 8px/1.35 var(--mono); letter-spacing: 1px; }
 .season-stamp strong { margin-top: 2px; font: 700 15px var(--display); letter-spacing: .3px; }
 .stamp-days { margin-top: 3px; color: var(--muted); font: 7px var(--mono); letter-spacing: .8px; }
+
+.holiday-banner { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 14px; padding: 20px 24px; border: 1px solid #e6b970; border-radius: 10px; background: #fff3da; color: #684021; }
+.holiday-banner[hidden] { display: none; }
+.holiday-copy { min-width: 0; }
+.holiday-banner .eyebrow { color: #85502f; }
+.holiday-banner h2 { margin: 7px 0; font: 700 22px var(--display); }
+.holiday-copy > p:not(.eyebrow) { margin: 0; font-size: 12px; line-height: 1.5; }
+.holiday-copy > p.holiday-winner { margin-top: 8px; font-weight: 700; }
+.holiday-mascot { width: 140px; height: auto; flex: 0 0 auto; }
 
 .champion-banner {
   position: relative;
@@ -443,6 +453,8 @@ h1, h2, p { margin-top: 0; }
   .stamp-label { font-size: 6px; }
   .season-stamp strong { font-size: 12px; }
   .stamp-days { font-size: 6px; }
+  .holiday-banner { padding: 16px; gap: 10px; }
+  .holiday-mascot { width: 72px; }
   .champion-banner { min-height: 168px; padding: 25px 20px; align-items: flex-start; }
   .champion-copy { max-width: 64%; }
   .champion-copy h2 { font-size: 22px; }

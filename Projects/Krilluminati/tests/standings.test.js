@@ -412,9 +412,10 @@ test("pending zeros display provisionally without changing official results", ()
   assert.equal(nodes.get("#rank-chart").innerHTML, baseline.nodes.get("#rank-chart").innerHTML);
 });
 
-test("November 25 stays provisional and Chris's playful note disappears when his score is resolved", () => {
+test("November 25 Chris note appears only while his score is pending", () => {
   const ledger = fs.readFileSync(path.join(projectDir, "scores.js"), "utf8");
-  const { nodes, context } = renderPage(ledger, { today: "2026-11-25T12:00:00" });
+  const { nodes, context } = renderPage(`${ledger}\nscores.find(entry => entry.date === "2026-11-25" && entry.player === "Chris").pending = true;`, { today: "2026-11-25T12:00:00" });
+  vm.runInContext('selectedDate = "2026-11-25"; renderRounds(getSeasonDays())', context);
   const entries = JSON.parse(vm.runInContext('JSON.stringify(getDayScores("2026-11-25"))', context));
   assert.deepEqual(entries.map(({ player, points, pending }) => [player, points, !!pending]), [
     ["Jimmy", 305, false], ["Kasra", 290, false], ["Brady", 250, false],
@@ -428,6 +429,44 @@ test("November 25 stays provisional and Chris's playful note disappears when his
   assert.doesNotMatch(nodes.get("#round-detail").innerHTML, /rage-quit Krillion/);
   vm.runInContext('scores.find(entry => entry.date === "2026-11-25" && entry.player === "Chris").pending = false; renderRoundDetail("2026-11-25")', context);
   assert.doesNotMatch(nodes.get("#round-detail").innerHTML, /rage-quit Krillion|Provisional/);
+});
+
+test("Krillsgiving shows the Thanksgiving daily winner and both squid parties", () => {
+  const ledger = fs.readFileSync(path.join(projectDir, "scores.js"), "utf8");
+  const { nodes, context } = renderPage(ledger, { today: "2026-11-26T12:00:00" });
+  const entries = JSON.parse(vm.runInContext('JSON.stringify(getDayScores("2026-11-26"))', context));
+  assert.deepEqual(entries.map(({ player, points, event }) => [player, points, event || null]), [
+    ["Steven", 415, "squid"], ["Kasra", 360, "squid"], ["Jimmy", 250, null],
+    ["Brady", 180, null], ["Chris", 0, null]
+  ]);
+  assert.equal(vm.runInContext('isProvisional("2026-11-25") || isProvisional("2026-11-26")', context), false);
+  assert.equal(nodes.get("#krillsgiving").hidden, false);
+  assert.equal(nodes.get("#brand-shrimp").hidden, true);
+  assert.equal(nodes.get("#brand-krilgrim").hidden, false);
+  assert.equal(nodes.get("#krillsgiving-winner").textContent, "Head of the Table: Steven · 415 pts");
+  assert.equal(nodes.get("#celebration-announcements").children.length, 1);
+  assert.match(nodes.get("#celebration-announcements").children[0].children[1].textContent, /Steven and Kasra/);
+  assert.equal(nodes.get("#celebration-particles").children.filter(({ className }) => className === "squid-spotlights").length, 1);
+  for (const today of ["2026-11-25T12:00:00", "2026-11-27T12:00:00", "2027-11-26T12:00:00"]) {
+    const otherDay = renderPage(ledger, { today }).nodes;
+    assert.equal(otherDay.get("#krillsgiving").hidden, true);
+    assert.equal(otherDay.get("#brand-shrimp").hidden, false);
+    assert.equal(otherDay.get("#brand-krilgrim").hidden, true);
+  }
+});
+
+test("Krillsgiving supports ties and never names a provisional winner", () => {
+  const entries = [
+    { date: "2026-11-26", player: "Jimmy", points: 400 },
+    { date: "2026-11-26", player: "Steven", points: 400 }
+  ];
+  const tie = renderPage(`const scores = ${JSON.stringify(entries)};`, { today: "2026-11-26T12:00:00" });
+  assert.equal(tie.nodes.get("#krillsgiving-winner").textContent, "Heads of the Table: Steven and Jimmy · 400 pts");
+  entries.push({ date: "2026-11-26", player: "Chris", points: 0, pending: true });
+  const pending = renderPage(`const scores = ${JSON.stringify(entries)};`, { today: "2026-11-26T12:00:00" });
+  assert.equal(pending.nodes.get("#krillsgiving-winner").textContent, "Head of the Table: awaiting finalized scores");
+  const empty = renderPage('const scores = [{ date: "2026-11-25", player: "Jimmy", points: 100 }];', { today: "2026-11-26T12:00:00" });
+  assert.equal(empty.nodes.get("#krillsgiving-winner").textContent, "Head of the Table: awaiting finalized scores");
 });
 
 test("round stays provisional until the last pending entry is resolved", () => {
